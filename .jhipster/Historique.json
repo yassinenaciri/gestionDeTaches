@@ -1,0 +1,43 @@
+{
+  "name": "Historique",
+  "fields": [
+    {
+      "fieldName": "dateDebut",
+      "fieldType": "Instant",
+      "javadoc": "The firstname attribute."
+    },
+    {
+      "fieldName": "dateFin",
+      "fieldType": "Instant"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "tache",
+      "otherEntityRelationshipName": "affectations",
+      "relationshipValidateRules": "required",
+      "relationshipName": "tache",
+      "otherEntityField": "nom"
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "employe",
+      "otherEntityRelationshipName": "affectations",
+      "relationshipValidateRules": "required",
+      "relationshipName": "cadre",
+      "otherEntityField": "nomComplet"
+    }
+  ],
+  "javadoc": "The Employee entity.",
+  "entityTableName": "historique",
+  "dto": "no",
+  "pagination": "pagination",
+  "service": "serviceImpl",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "applications": "*",
+  "changelogDate": "20210717193447"
+}

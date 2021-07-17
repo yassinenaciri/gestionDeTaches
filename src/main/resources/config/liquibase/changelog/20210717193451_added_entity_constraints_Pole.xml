@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
+    <!--
+        Added the constraints for entity Pole.
+    -->
+    <changeSet id="20210717193451-2" author="jhipster">
+
+        <addForeignKeyConstraint baseColumnNames="chef_id"
+                                 baseTableName="pole"
+                                 constraintName="fk_pole__chef_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="chef"/>
+
+        <addForeignKeyConstraint baseColumnNames="direction_id"
+                                 baseTableName="pole"
+                                 constraintName="fk_pole__direction_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="direction"/>
+    </changeSet>
+</databaseChangeLog>

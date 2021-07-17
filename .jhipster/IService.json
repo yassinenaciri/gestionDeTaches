@@ -1,0 +1,46 @@
+{
+  "name": "IService",
+  "fields": [
+    {
+      "fieldName": "nom",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "one-to-one",
+      "otherEntityName": "chef",
+      "otherEntityRelationshipName": "service",
+      "relationshipValidateRules": "required",
+      "relationshipName": "chef",
+      "otherEntityField": "nomComplet",
+      "ownerSide": true
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "division",
+      "otherEntityRelationshipName": "services",
+      "relationshipValidateRules": "required",
+      "relationshipName": "division",
+      "otherEntityField": "nom"
+    },
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "employe",
+      "otherEntityRelationshipName": "service",
+      "relationshipName": "cadres",
+      "otherEntityField": "nomComplet"
+    }
+  ],
+  "entityTableName": "i_service",
+  "dto": "no",
+  "pagination": "pagination",
+  "service": "serviceImpl",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "applications": "*",
+  "changelogDate": "20210717193449"
+}
