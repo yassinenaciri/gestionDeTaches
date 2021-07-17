@@ -1,0 +1,74 @@
+
+entity Employe {
+	nomComplet String required,
+}
+
+entity Chef {
+	nomComplet String required,
+    role String,
+}
+
+/**
+ * The Employee entity.
+ */
+entity Historique {
+	/**
+	* The firstname attribute.
+	*/
+	DateDebut Instant,
+    DateFin Instant,
+}
+
+entity Tache {
+	nom String required,
+	dureEstime Duration required,
+	description String required,
+    etat Boolean,
+}
+
+entity IService {
+	nom String required
+}
+entity Division {
+	nom String required
+}
+entity Pole {
+	nom String required
+}
+
+entity Direction {
+	nom String required
+}
+
+
+// defining multiple OneToMany relationships with comments
+relationship OneToOne {
+	
+    IService{chef(nomComplet) required} to Chef{service(nom)} ,
+    Pole{chef(nomComplet) required} to Chef{pole(nom)} ,
+    Direction{directeur(nomComplet) required} to Chef{direction(nom)},
+    Division{chef(nomComplet) required} to Chef{division(nom)},
+    Employe{compte(email)} to User,
+    Chef{compte(email)} to User,
+    Tache{service(nom) } to IService,
+    
+	
+}
+
+relationship ManyToOne {
+Historique{tache(nom) required} to Tache{affectations},
+Tache{cadreAffecte(nomComplet)} to Employe{tachesAffecte } ,
+Employe{service(nom) } to IService{cadres(nomComplet)},
+IService{division(nom) required} to Division{services},
+Division{pole(nom) required} to Pole{divisions},
+Pole{direction(nom) required} to Direction{poles},
+Historique{cadre(nomComplet) required} to Employe{affectations},
+
+}
+
+
+
+paginate all with pagination
+
+
+service all with serviceImpl 
