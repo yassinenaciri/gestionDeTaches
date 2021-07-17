@@ -1,0 +1,37 @@
+{
+  "name": "Direction",
+  "fields": [
+    {
+      "fieldName": "nom",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "one-to-one",
+      "otherEntityName": "chef",
+      "otherEntityRelationshipName": "direction",
+      "relationshipValidateRules": "required",
+      "relationshipName": "directeur",
+      "otherEntityField": "nomComplet",
+      "ownerSide": true
+    },
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "pole",
+      "otherEntityRelationshipName": "direction",
+      "relationshipName": "poles"
+    }
+  ],
+  "entityTableName": "direction",
+  "dto": "no",
+  "pagination": "pagination",
+  "service": "serviceImpl",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "applications": "*",
+  "changelogDate": "20210717193452"
+}

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
+    <!--
+        Added the constraints for entity Historique.
+    -->
+    <changeSet id="20210717193447-2" author="jhipster">
+
+        <addForeignKeyConstraint baseColumnNames="tache_id"
+                                 baseTableName="historique"
+                                 constraintName="fk_historique__tache_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="tache"/>
+
+        <addForeignKeyConstraint baseColumnNames="cadre_id"
+                                 baseTableName="historique"
+                                 constraintName="fk_historique__cadre_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="employe"/>
+    </changeSet>
+</databaseChangeLog>
