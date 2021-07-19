@@ -70,8 +70,10 @@ export const TacheUpdate = (props: RouteComponentProps<{ id: string }>) => {
     isNew
       ? {
           dateLimite: displayDefaultDateTime(),
-          dateDebut: displayDefaultDateTime(),
-          dateFin: displayDefaultDateTime(),
+          dateDebut: null,
+          dateFin: null,
+          etat: 'NonCommence',
+          serviceId: tacheEntity?.service?.id,
         }
       : {
           ...tacheEntity,
@@ -139,46 +141,6 @@ export const TacheUpdate = (props: RouteComponentProps<{ id: string }>) => {
                   required: { value: true, message: translate('entity.validation.required') },
                 }}
               />
-              <ValidatedField label={translate('gestionDeTachesApp.tache.etat')} id="tache-etat" name="etat" data-cy="etat" type="select">
-                <option value="NonCommence">{translate('gestionDeTachesApp.Etat.NonCommence')}</option>
-                <option value="Encours">{translate('gestionDeTachesApp.Etat.Encours')}</option>
-                <option value="Termine">{translate('gestionDeTachesApp.Etat.Termine')}</option>
-                <option value="Abondonne">{translate('gestionDeTachesApp.Etat.Abondonne')}</option>
-                <option value="Valide">{translate('gestionDeTachesApp.Etat.Valide')}</option>
-                <option value="Refuse">{translate('gestionDeTachesApp.Etat.Refuse')}</option>
-              </ValidatedField>
-              <ValidatedField
-                label={translate('gestionDeTachesApp.tache.dateDebut')}
-                id="tache-dateDebut"
-                name="dateDebut"
-                data-cy="dateDebut"
-                type="datetime-local"
-                placeholder="YYYY-MM-DD HH:mm"
-              />
-              <ValidatedField
-                label={translate('gestionDeTachesApp.tache.dateFin')}
-                id="tache-dateFin"
-                name="dateFin"
-                data-cy="dateFin"
-                type="datetime-local"
-                placeholder="YYYY-MM-DD HH:mm"
-              />
-              <ValidatedField
-                id="tache-service"
-                name="serviceId"
-                data-cy="service"
-                label={translate('gestionDeTachesApp.tache.service')}
-                type="select"
-              >
-                <option value="" key="0" />
-                {iServices
-                  ? iServices.map(otherEntity => (
-                      <option value={otherEntity.id} key={otherEntity.id}>
-                        {otherEntity.nomService}
-                      </option>
-                    ))
-                  : null}
-              </ValidatedField>
               <ValidatedField
                 id="tache-cadreAffecte"
                 name="cadreAffecteId"

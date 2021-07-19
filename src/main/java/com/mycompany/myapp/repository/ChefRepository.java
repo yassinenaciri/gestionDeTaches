@@ -9,4 +9,6 @@ import org.springframework.stereotype.Repository;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface ChefRepository extends JpaRepository<Chef, Long> {}
+public interface ChefRepository extends JpaRepository<Chef, Long> {
+    Chef findChefByCompte_Id(Long id);
+}

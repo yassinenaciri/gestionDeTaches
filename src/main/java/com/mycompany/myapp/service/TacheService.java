@@ -31,7 +31,7 @@ public interface TacheService {
      * @param pageable the pagination information.
      * @return the list of entities.
      */
-    Page<Tache> findAll(Pageable pageable);
+    Page<Tache> findAll(Pageable pageable, String filter);
 
     /**
      * Get the "id" tache.

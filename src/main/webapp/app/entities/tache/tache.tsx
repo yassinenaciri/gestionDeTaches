@@ -10,6 +10,7 @@ import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
 import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/shared/util/pagination.constants';
 import { overridePaginationStateWithQueryParams } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
+import { Etat } from 'app/shared/model/enumerations/etat.model';
 
 export const Tache = (props: RouteComponentProps<{ url: string }>) => {
   const dispatch = useAppDispatch();
@@ -19,8 +20,10 @@ export const Tache = (props: RouteComponentProps<{ url: string }>) => {
   );
 
   const tacheList = useAppSelector(state => state.tache.entities);
+
   const loading = useAppSelector(state => state.tache.loading);
   const totalItems = useAppSelector(state => state.tache.totalItems);
+  const filter = useAppSelector(state => state.tache.links);
 
   const getAllEntities = () => {
     dispatch(
@@ -28,6 +31,7 @@ export const Tache = (props: RouteComponentProps<{ url: string }>) => {
         page: paginationState.activePage - 1,
         size: paginationState.itemsPerPage,
         sort: `${paginationState.sort},${paginationState.order}`,
+        query: filter,
       })
     );
   };
@@ -100,18 +104,13 @@ export const Tache = (props: RouteComponentProps<{ url: string }>) => {
           <Table responsive>
             <thead>
               <tr>
-                <th className="hand" onClick={sort('id')}>
-                  <Translate contentKey="gestionDeTachesApp.tache.id">ID</Translate> <FontAwesomeIcon icon="sort" />
-                </th>
                 <th className="hand" onClick={sort('intitule')}>
                   <Translate contentKey="gestionDeTachesApp.tache.intitule">Intitule</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
                 <th className="hand" onClick={sort('dateLimite')}>
                   <Translate contentKey="gestionDeTachesApp.tache.dateLimite">Date Limite</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
-                <th className="hand" onClick={sort('description')}>
-                  <Translate contentKey="gestionDeTachesApp.tache.description">Description</Translate> <FontAwesomeIcon icon="sort" />
-                </th>
+
                 <th className="hand" onClick={sort('etat')}>
                   <Translate contentKey="gestionDeTachesApp.tache.etat">Etat</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
@@ -133,14 +132,9 @@ export const Tache = (props: RouteComponentProps<{ url: string }>) => {
             <tbody>
               {tacheList.map((tache, i) => (
                 <tr key={`entity-${i}`} data-cy="entityTable">
-                  <td>
-                    <Button tag={Link} to={`${match.url}/${tache.id}`} color="link" size="sm">
-                      {tache.id}
-                    </Button>
-                  </td>
                   <td>{tache.intitule}</td>
                   <td>{tache.dateLimite ? <TextFormat type="date" value={tache.dateLimite} format={APP_DATE_FORMAT} /> : null}</td>
-                  <td>{tache.description}</td>
+
                   <td>
                     <Translate contentKey={`gestionDeTachesApp.Etat.${tache.etat}`} />
                   </td>

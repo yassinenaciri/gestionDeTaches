@@ -1,8 +1,13 @@
 package com.mycompany.myapp.service.impl;
 
+import com.mycompany.myapp.domain.Chef;
 import com.mycompany.myapp.domain.Tache;
+import com.mycompany.myapp.domain.User;
+import com.mycompany.myapp.domain.enumeration.Etat;
+import com.mycompany.myapp.repository.ChefRepository;
 import com.mycompany.myapp.repository.TacheRepository;
 import com.mycompany.myapp.service.TacheService;
+import com.mycompany.myapp.service.UserService;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,16 +24,27 @@ import org.springframework.transaction.annotation.Transactional;
 public class TacheServiceImpl implements TacheService {
 
     private final Logger log = LoggerFactory.getLogger(TacheServiceImpl.class);
+    private final UserService userService;
 
     private final TacheRepository tacheRepository;
+    private final ChefRepository chefRepository;
 
-    public TacheServiceImpl(TacheRepository tacheRepository) {
+    public TacheServiceImpl(TacheRepository tacheRepository, UserService userService, ChefRepository chefRepository) {
         this.tacheRepository = tacheRepository;
+        this.userService = userService;
+        this.chefRepository = chefRepository;
     }
 
     @Override
     public Tache save(Tache tache) {
+        User user = userService.getUserWithAuthorities().get();
+        Chef chef = chefRepository.findChefByCompte_Id(user.getId());
         log.debug("Request to save Tache : {}", tache);
+        tache.setEtat(Etat.NonCommence);
+        tache.setDateDebut(null);
+        tache.setDateFin(null);
+        tache.setService(chef.getService());
+
         return tacheRepository.save(tache);
     }
 
@@ -67,9 +83,8 @@ public class TacheServiceImpl implements TacheService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<Tache> findAll(Pageable pageable) {
-        log.debug("Request to get all Taches");
-        return tacheRepository.findAll(pageable);
+    public Page<Tache> findAll(Pageable pageable, String filter) {
+        return tacheRepository.findByEtat(pageable, Etat.NonCommence);
     }
 
     @Override

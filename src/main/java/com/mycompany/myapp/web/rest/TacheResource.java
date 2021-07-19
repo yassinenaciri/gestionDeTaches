@@ -143,9 +143,9 @@ public class TacheResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of taches in body.
      */
     @GetMapping("/taches")
-    public ResponseEntity<List<Tache>> getAllTaches(Pageable pageable) {
+    public ResponseEntity<List<Tache>> getAllTaches(Pageable pageable, @RequestParam(required = false) String filter) {
         log.debug("REST request to get a page of Taches");
-        Page<Tache> page = tacheService.findAll(pageable);
+        Page<Tache> page = tacheService.findAll(pageable, filter);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }

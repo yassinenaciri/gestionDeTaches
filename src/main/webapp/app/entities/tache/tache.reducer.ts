@@ -4,8 +4,11 @@ import { createAsyncThunk, isFulfilled, isPending, isRejected } from '@reduxjs/t
 import { cleanEntity } from 'app/shared/util/entity-utils';
 import { IQueryParams, createEntitySlice, EntityState, serializeAxiosError } from 'app/shared/reducers/reducer.utils';
 import { ITache, defaultValue } from 'app/shared/model/tache.model';
+import { useAppSelector } from 'app/config/store';
+import { Etat } from 'app/shared/model/enumerations/etat.model';
 
 const initialState: EntityState<ITache> = {
+  links: Etat.NonCommence,
   loading: false,
   errorMessage: null,
   entities: [],
@@ -16,11 +19,12 @@ const initialState: EntityState<ITache> = {
 };
 
 const apiUrl = 'api/taches';
-
 // Actions
 
-export const getEntities = createAsyncThunk('tache/fetch_entity_list', async ({ page, size, sort }: IQueryParams) => {
-  const requestUrl = `${apiUrl}${sort ? `?page=${page}&size=${size}&sort=${sort}&` : '?'}cacheBuster=${new Date().getTime()}`;
+export const getEntities = createAsyncThunk('tache/fetch_entity_list', async ({ page, size, sort, query }: IQueryParams, filter?) => {
+  const requestUrl = `${apiUrl}${
+    sort ? `?page=${page}&size=${size}&sort=${sort}&` : '?'
+  }&filter=${query}&cacheBuster=${new Date().getTime()}`;
   return axios.get<ITache[]>(requestUrl);
 });
 
