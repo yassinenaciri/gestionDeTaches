@@ -1,0 +1,45 @@
+{
+  "name": "Division",
+  "fields": [
+    {
+      "fieldName": "nomDivision",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "one-to-one",
+      "otherEntityName": "chef",
+      "otherEntityRelationshipName": "division",
+      "relationshipValidateRules": "required",
+      "relationshipName": "chef",
+      "otherEntityField": "nomComplet",
+      "ownerSide": true
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "pole",
+      "otherEntityRelationshipName": "divisions",
+      "relationshipValidateRules": "required",
+      "relationshipName": "pole",
+      "otherEntityField": "nomPole"
+    },
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "iService",
+      "otherEntityRelationshipName": "division",
+      "relationshipName": "services"
+    }
+  ],
+  "entityTableName": "division",
+  "dto": "no",
+  "pagination": "pagination",
+  "service": "serviceImpl",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "applications": "*",
+  "changelogDate": "20210719153017"
+}

@@ -1,0 +1,27 @@
+{
+  "gestionDeTachesApp": {
+    "iService": {
+      "home": {
+        "title": "IServices",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau I Service",
+        "createOrEditLabel": "Créer ou éditer un I Service",
+        "notFound": "Aucun I Service trouvé"
+      },
+      "created": "Un nouveau I Service a été créé avec l'identifiant {{ param }}",
+      "updated": "Le I Service avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le I Service avec l'identifiant {{ param }} a été supprimé",
+      "delete": {
+        "question": "Etes-vous certain de vouloir supprimer le I Service {{ id }} ?"
+      },
+      "detail": {
+        "title": "I Service"
+      },
+      "id": "ID",
+      "nomService": "Nom Service",
+      "chef": "Chef",
+      "division": "Division",
+      "cadres": "Cadres"
+    }
+  }
+}

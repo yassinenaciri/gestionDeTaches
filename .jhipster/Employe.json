@@ -1,0 +1,44 @@
+{
+  "name": "Employe",
+  "fields": [
+    {
+      "fieldName": "nomComplet",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "one-to-one",
+      "otherEntityName": "user",
+      "otherEntityRelationshipName": "employe",
+      "relationshipName": "compte",
+      "otherEntityField": "email",
+      "ownerSide": true
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "iService",
+      "otherEntityRelationshipName": "cadres",
+      "relationshipValidateRules": "required",
+      "relationshipName": "service",
+      "otherEntityField": "nomService"
+    },
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "tache",
+      "otherEntityRelationshipName": "cadreAffecte",
+      "relationshipName": "tachesAffecte"
+    }
+  ],
+  "entityTableName": "employe",
+  "dto": "no",
+  "pagination": "pagination",
+  "service": "serviceImpl",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "applications": "*",
+  "changelogDate": "20210719153013"
+}

@@ -1,0 +1,27 @@
+{
+  "gestionDeTachesApp": {
+    "pole": {
+      "home": {
+        "title": "Poles",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Pole",
+        "createOrEditLabel": "Créer ou éditer un Pole",
+        "notFound": "Aucun Pole trouvé"
+      },
+      "created": "Un nouveau Pole a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Pole avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Pole avec l'identifiant {{ param }} a été supprimé",
+      "delete": {
+        "question": "Etes-vous certain de vouloir supprimer le Pole {{ id }} ?"
+      },
+      "detail": {
+        "title": "Pole"
+      },
+      "id": "ID",
+      "nomPole": "Nom Pole",
+      "chef": "Chef",
+      "direction": "Direction",
+      "divisions": "Divisions"
+    }
+  }
+}
