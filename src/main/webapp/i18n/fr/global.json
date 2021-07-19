@@ -7,14 +7,6 @@
       "jhipster-needle-menu-add-element": "JHipster will add additional menu entries here (do not translate!)",
       "entities": {
         "main": "Entités",
-        "employe": "Employe",
-        "chef": "Chef",
-        "historique": "Historique",
-        "tache": "Tache",
-        "iService": "I Service",
-        "division": "Division",
-        "pole": "Pole",
-        "direction": "Direction",
         "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)"
       },
       "account": {
