@@ -1,0 +1,66 @@
+{
+  "name": "Chef",
+  "fields": [
+    {
+      "fieldName": "nomComplet",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "role",
+      "fieldType": "String"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "one-to-one",
+      "otherEntityName": "user",
+      "otherEntityRelationshipName": "chef",
+      "relationshipName": "compte",
+      "otherEntityField": "email",
+      "ownerSide": true
+    },
+    {
+      "relationshipType": "one-to-one",
+      "otherEntityName": "iService",
+      "otherEntityRelationshipName": "chef",
+      "relationshipName": "service",
+      "otherEntityField": "nomService",
+      "ownerSide": false
+    },
+    {
+      "relationshipType": "one-to-one",
+      "otherEntityName": "pole",
+      "otherEntityRelationshipName": "chef",
+      "relationshipName": "pole",
+      "otherEntityField": "nomPole",
+      "ownerSide": false
+    },
+    {
+      "relationshipType": "one-to-one",
+      "otherEntityName": "direction",
+      "otherEntityRelationshipName": "directeur",
+      "relationshipName": "direction",
+      "otherEntityField": "nomDirection",
+      "ownerSide": false
+    },
+    {
+      "relationshipType": "one-to-one",
+      "otherEntityName": "division",
+      "otherEntityRelationshipName": "chef",
+      "relationshipName": "division",
+      "otherEntityField": "nomDivision",
+      "ownerSide": false
+    }
+  ],
+  "entityTableName": "chef",
+  "dto": "no",
+  "pagination": "pagination",
+  "service": "serviceImpl",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "applications": "*",
+  "changelogDate": "20210719153014"
+}

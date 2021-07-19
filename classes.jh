@@ -1,0 +1,76 @@
+
+entity Employe {
+	nomComplet String required,
+}
+
+entity Chef {
+	nomComplet String required,
+    role String,
+}
+enum Etat {
+  NonCommence ("Non commencé"),
+  Encours ("En cours"),
+  Termine ("Terminé"),
+  Abondonne ("Abondonné"),
+  Valide ("Validé"),
+  Refuse ("Refusé")
+}
+
+/**
+ * The Employee entity.
+ */
+
+
+entity Tache {
+	intitule String required,
+	dateLimite Instant required,
+	description String required,
+    etat Etat,
+    dateDebut Instant,
+    dateFin Instant,
+}
+
+entity IService {
+	nomService String required
+}
+entity Division {
+	nomDivision String required
+}
+entity Pole {
+	nomPole String required
+}
+
+entity Direction {
+	nomDirection String required
+}
+
+
+// defining multiple OneToMany relationships with comments
+relationship OneToOne {
+	
+    IService{chef(nomComplet) required} to Chef{service(nomService)} ,
+    Pole{chef(nomComplet) required} to Chef{pole(nomPole)} ,
+    Direction{directeur(nomComplet) required} to Chef{direction(nomDirection)},
+    Division{chef(nomComplet) required} to Chef{division(nomDivision)},
+    Employe{compte(email)} to User,
+    Chef{compte(email)} to User,
+    Tache{service(nomService) } to IService,
+    
+	
+}
+
+relationship ManyToOne {
+Tache{cadreAffecte(nomComplet)} to Employe{tachesAffecte } ,
+Employe{service(nomService) required } to IService{cadres(nomComplet)},
+IService{division(nomDivision) required} to Division{services},
+Division{pole(nomPole) required} to Pole{divisions},
+Pole{direction(nomDirection) required} to Direction{poles},
+
+}
+
+
+
+paginate all with pagination
+
+
+service all with serviceImpl 

@@ -1,0 +1,61 @@
+{
+  "name": "Tache",
+  "fields": [
+    {
+      "fieldName": "intitule",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "dateLimite",
+      "fieldType": "Instant",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "description",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "etat",
+      "fieldType": "Etat",
+      "fieldValues": "NonCommence (Non commencé),Encours (En cours),Termine (Terminé),Abondonne (Abondonné),Valide (Validé),Refuse (Refusé)"
+    },
+    {
+      "fieldName": "dateDebut",
+      "fieldType": "Instant"
+    },
+    {
+      "fieldName": "dateFin",
+      "fieldType": "Instant"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "one-to-one",
+      "otherEntityName": "iService",
+      "otherEntityRelationshipName": "tache",
+      "relationshipName": "service",
+      "otherEntityField": "nomService",
+      "ownerSide": true
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "employe",
+      "otherEntityRelationshipName": "tachesAffecte",
+      "relationshipName": "cadreAffecte",
+      "otherEntityField": "nomComplet"
+    }
+  ],
+  "javadoc": "The Employee entity.",
+  "entityTableName": "tache",
+  "dto": "no",
+  "pagination": "pagination",
+  "service": "serviceImpl",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "applications": "*",
+  "changelogDate": "20210719153015"
+}
