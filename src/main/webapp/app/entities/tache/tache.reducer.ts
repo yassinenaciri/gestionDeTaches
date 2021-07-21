@@ -8,7 +8,7 @@ import { useAppSelector } from 'app/config/store';
 import { Etat } from 'app/shared/model/enumerations/etat.model';
 
 const initialState: EntityState<ITache> = {
-  links: Etat.NonCommence,
+  links: 'NonCommence',
   loading: false,
   errorMessage: null,
   entities: [],
@@ -33,6 +33,14 @@ export const getEntity = createAsyncThunk(
   async (id: string | number) => {
     const requestUrl = `${apiUrl}/${id}`;
     return axios.get<ITache>(requestUrl);
+  },
+  { serializeError: serializeAxiosError }
+);
+
+export const filtrer = createAsyncThunk(
+  'tache/filtrer',
+  (filtre: string) => {
+    return filtre;
   },
   { serializeError: serializeAxiosError }
 );
@@ -78,6 +86,16 @@ export const deleteEntity = createAsyncThunk(
   { serializeError: serializeAxiosError }
 );
 
+export const updateEtat = createAsyncThunk(
+  'tache/updateEtat',
+  async (object: { id: string | number; nouveauEtat: string }, thunkAPI) => {
+    const requestUrl = `${apiUrl}/updateEtat/${object.id}`;
+    const result = await axios.post<ITache>(requestUrl, object.nouveauEtat);
+    return result;
+  },
+  { serializeError: serializeAxiosError }
+);
+
 // slice
 
 export const TacheSlice = createEntitySlice({
@@ -88,6 +106,10 @@ export const TacheSlice = createEntitySlice({
       .addCase(getEntity.fulfilled, (state, action) => {
         state.loading = false;
         state.entity = action.payload.data;
+      })
+      .addCase(filtrer.fulfilled, (state, action) => {
+        state.loading = false;
+        state.links = action.payload;
       })
       .addCase(deleteEntity.fulfilled, state => {
         state.updating = false;
@@ -102,7 +124,7 @@ export const TacheSlice = createEntitySlice({
           totalItems: parseInt(action.payload.headers['x-total-count'], 10),
         };
       })
-      .addMatcher(isFulfilled(createEntity, updateEntity, partialUpdateEntity), (state, action) => {
+      .addMatcher(isFulfilled(createEntity, updateEntity, partialUpdateEntity, updateEtat), (state, action) => {
         state.updating = false;
         state.loading = false;
         state.updateSuccess = true;
@@ -113,7 +135,7 @@ export const TacheSlice = createEntitySlice({
         state.updateSuccess = false;
         state.loading = true;
       })
-      .addMatcher(isPending(createEntity, updateEntity, partialUpdateEntity, deleteEntity), state => {
+      .addMatcher(isPending(createEntity, updateEntity, partialUpdateEntity, deleteEntity, updateEtat), state => {
         state.errorMessage = null;
         state.updateSuccess = false;
         state.updating = true;

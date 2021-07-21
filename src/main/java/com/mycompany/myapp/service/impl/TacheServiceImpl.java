@@ -84,7 +84,7 @@ public class TacheServiceImpl implements TacheService {
     @Override
     @Transactional(readOnly = true)
     public Page<Tache> findAll(Pageable pageable, String filter) {
-        return tacheRepository.findByEtat(pageable, Etat.NonCommence);
+        return tacheRepository.findByEtat(pageable, Etat.valueOf(filter));
     }
 
     @Override
@@ -92,6 +92,13 @@ public class TacheServiceImpl implements TacheService {
     public Optional<Tache> findOne(Long id) {
         log.debug("Request to get Tache : {}", id);
         return tacheRepository.findById(id);
+    }
+
+    @Override
+    public Tache updateEtat(long id, String nouveauEtat) {
+        Tache tache = tacheRepository.findById(id).get();
+        tache.setEtat(Etat.valueOf(nouveauEtat));
+        return tacheRepository.save(tache);
     }
 
     @Override

@@ -41,6 +41,8 @@ public interface TacheService {
      */
     Optional<Tache> findOne(Long id);
 
+    Tache updateEtat(long id, String nouveauEtat);
+
     /**
      * Delete the "id" tache.
      *

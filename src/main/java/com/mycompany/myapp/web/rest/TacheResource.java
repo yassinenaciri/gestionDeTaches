@@ -1,6 +1,7 @@
 package com.mycompany.myapp.web.rest;
 
 import com.mycompany.myapp.domain.Tache;
+import com.mycompany.myapp.domain.enumeration.Etat;
 import com.mycompany.myapp.repository.TacheRepository;
 import com.mycompany.myapp.service.TacheService;
 import com.mycompany.myapp.web.rest.errors.BadRequestAlertException;
@@ -177,5 +178,16 @@ public class TacheResource {
             .noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
+    }
+
+    @PostMapping("/taches/updateEtat/{id}")
+    public ResponseEntity<Tache> updateEtat(@PathVariable Long id, @RequestBody String nouveauEtat) {
+        nouveauEtat = nouveauEtat.substring(0, nouveauEtat.length() - 1);
+        log.debug("heeeeeeere : " + id + nouveauEtat);
+        Tache result = tacheService.updateEtat(id, nouveauEtat);
+        return ResponseEntity
+            .ok()
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, id.toString()))
+            .body(result);
     }
 }
