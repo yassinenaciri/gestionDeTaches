@@ -32,6 +32,8 @@ export const App = () => {
   const currentLocale = useAppSelector(state => state.locale.currentLocale);
   const isAuthenticated = useAppSelector(state => state.authentication.isAuthenticated);
   const isAdmin = useAppSelector(state => hasAnyAuthority(state.authentication.account.authorities, [AUTHORITIES.ADMIN]));
+  const isCadre = useAppSelector(state => hasAnyAuthority(state.authentication.account.authorities, [AUTHORITIES.CADRE]));
+  const isChefService = useAppSelector(state => hasAnyAuthority(state.authentication.account.authorities, [AUTHORITIES.CHEFSERVICE]));
   const ribbonEnv = useAppSelector(state => state.applicationProfile.ribbonEnv);
   const isInProduction = useAppSelector(state => state.applicationProfile.inProduction);
   const isOpenAPIEnabled = useAppSelector(state => state.applicationProfile.isOpenAPIEnabled);
@@ -43,6 +45,8 @@ export const App = () => {
         <ToastContainer position={toast.POSITION.TOP_LEFT} className="toastify-container" toastClassName="toastify-toast" />
         <ErrorBoundary>
           <Header
+            isCadre={isCadre}
+            isChefService={isChefService}
             isAuthenticated={isAuthenticated}
             isAdmin={isAdmin}
             currentLocale={currentLocale}

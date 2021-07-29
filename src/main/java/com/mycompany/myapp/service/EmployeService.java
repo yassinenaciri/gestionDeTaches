@@ -1,6 +1,8 @@
 package com.mycompany.myapp.service;
 
 import com.mycompany.myapp.domain.Employe;
+import com.mycompany.myapp.domain.IService;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -32,6 +34,8 @@ public interface EmployeService {
      * @return the list of entities.
      */
     Page<Employe> findAll(Pageable pageable);
+
+    List<Employe> findClassementByService(IService service);
 
     /**
      * Get the "id" employe.

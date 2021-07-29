@@ -4,10 +4,13 @@ import { createAsyncThunk, isFulfilled, isPending, isRejected } from '@reduxjs/t
 import { cleanEntity } from 'app/shared/util/entity-utils';
 import { IQueryParams, createEntitySlice, EntityState, serializeAxiosError } from 'app/shared/reducers/reducer.utils';
 import { IEmploye, defaultValue } from 'app/shared/model/employe.model';
+import { ITache } from 'app/shared/model/tache.model';
+import { activateAction } from 'app/modules/account/activate/activate.reducer';
 
 const initialState: EntityState<IEmploye> = {
   loading: false,
   errorMessage: null,
+  links: [],
   entities: [],
   entity: defaultValue,
   updating: false,
@@ -22,6 +25,16 @@ const apiUrl = 'api/employes';
 export const getEntities = createAsyncThunk('employe/fetch_entity_list', async ({ page, size, sort }: IQueryParams) => {
   const requestUrl = `${apiUrl}${sort ? `?page=${page}&size=${size}&sort=${sort}&` : '?'}cacheBuster=${new Date().getTime()}`;
   return axios.get<IEmploye[]>(requestUrl);
+});
+
+export const getEmployeOccupe = createAsyncThunk('employe/fetch_employe_occupe', async () => {
+  const requestUrl = `${'api/taches'}?filter=${'Encours'}&cacheBuster=${new Date().getTime()}`;
+  const listeTacheEncours: ITache[] = (await axios.get<ITache[]>(requestUrl)).data;
+  const listeIdEmployeOccupe: string[] = [];
+  listeTacheEncours.forEach(a => {
+    listeIdEmployeOccupe.push(a.cadreAffecte.id.toString());
+  });
+  return listeIdEmployeOccupe;
 });
 
 export const getEntity = createAsyncThunk(
@@ -89,6 +102,9 @@ export const EmployeSlice = createEntitySlice({
         state.updating = false;
         state.updateSuccess = true;
         state.entity = {};
+      })
+      .addCase(getEmployeOccupe.fulfilled, (state, action) => {
+        state.links = action.payload;
       })
       .addMatcher(isFulfilled(getEntities), (state, action) => {
         return {

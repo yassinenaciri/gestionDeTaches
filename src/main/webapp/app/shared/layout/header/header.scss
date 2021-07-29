@@ -47,12 +47,17 @@ Navbar styles
   &:hover {
     text-decoration: none;
   }
+  .ffffff {
+    height: 100%;
+    width: 100%;
+    background: RED;
+  }
   .brand-icon {
     height: 35px;
     width: auto;
     display: inline-block;
     img {
-      height: 45px;
+      height: 60px;
     }
   }
 }

@@ -17,7 +17,7 @@ import { useAppDispatch, useAppSelector } from 'app/config/store';
 export const TacheUpdate = (props: RouteComponentProps<{ id: string }>) => {
   const dispatch = useAppDispatch();
 
-  const [isNew] = useState(!props.match.params || !props.match.params.id);
+  const [isNew] = useState(!props.match.params || !props.match.params.id || props.match.url.includes('new'));
 
   const iServices = useAppSelector(state => state.iService.entities);
   const employes = useAppSelector(state => state.employe.entities);
@@ -56,7 +56,7 @@ export const TacheUpdate = (props: RouteComponentProps<{ id: string }>) => {
       ...tacheEntity,
       ...values,
       service: iServices.find(it => it.id.toString() === values.serviceId.toString()),
-      cadreAffecte: employes.find(it => it.id.toString() === values.cadreAffecteId.toString()),
+      cadreAffecte: employes.find(it => it.id.toString() === props.match.params.id),
     };
 
     if (isNew) {
@@ -70,10 +70,8 @@ export const TacheUpdate = (props: RouteComponentProps<{ id: string }>) => {
     isNew
       ? {
           dateLimite: displayDefaultDateTime(),
-          dateDebut: null,
-          dateFin: null,
-          etat: 'NonCommence',
-          serviceId: tacheEntity?.service?.id,
+          dateDebut: displayDefaultDateTime(),
+          dateFin: displayDefaultDateTime(),
         }
       : {
           ...tacheEntity,
@@ -102,6 +100,7 @@ export const TacheUpdate = (props: RouteComponentProps<{ id: string }>) => {
             <ValidatedForm defaultValues={defaultValues()} onSubmit={saveEntity}>
               {!isNew ? (
                 <ValidatedField
+                  hidden={true}
                   name="id"
                   required
                   readOnly
@@ -142,7 +141,58 @@ export const TacheUpdate = (props: RouteComponentProps<{ id: string }>) => {
                 }}
               />
               <ValidatedField
+                hidden={true}
+                label={translate('gestionDeTachesApp.tache.etat')}
+                id="tache-etat"
+                name="etat"
+                data-cy="etat"
+                type="select"
+              >
+                <option value="NonCommence">{translate('gestionDeTachesApp.Etat.NonCommence')}</option>
+                <option value="Encours">{translate('gestionDeTachesApp.Etat.Encours')}</option>
+                <option value="Termine">{translate('gestionDeTachesApp.Etat.Termine')}</option>
+                <option value="Abondonne">{translate('gestionDeTachesApp.Etat.Abondonne')}</option>
+                <option value="Valide">{translate('gestionDeTachesApp.Etat.Valide')}</option>
+                <option value="Refuse">{translate('gestionDeTachesApp.Etat.Refuse')}</option>
+              </ValidatedField>
+              <ValidatedField
+                hidden={true}
+                label={translate('gestionDeTachesApp.tache.dateDebut')}
+                id="tache-dateDebut"
+                name="dateDebut"
+                data-cy="dateDebut"
+                type="datetime-local"
+                placeholder="YYYY-MM-DD HH:mm"
+              />
+              <ValidatedField
+                hidden={true}
+                label={translate('gestionDeTachesApp.tache.dateFin')}
+                id="tache-dateFin"
+                name="dateFin"
+                data-cy="dateFin"
+                type="datetime-local"
+                placeholder="YYYY-MM-DD HH:mm"
+              />
+              <ValidatedField
+                hidden={true}
+                id="tache-service"
+                name="serviceId"
+                data-cy="service"
+                label={translate('gestionDeTachesApp.tache.service')}
+                type="select"
+              >
+                <option value="" key="0" />
+                {iServices
+                  ? iServices.map(otherEntity => (
+                      <option value={otherEntity.id} key={otherEntity.id}>
+                        {otherEntity.nomService}
+                      </option>
+                    ))
+                  : null}
+              </ValidatedField>
+              <ValidatedField
                 id="tache-cadreAffecte"
+                hidden={true}
                 name="cadreAffecteId"
                 data-cy="cadreAffecte"
                 label={translate('gestionDeTachesApp.tache.cadreAffecte')}
@@ -157,7 +207,14 @@ export const TacheUpdate = (props: RouteComponentProps<{ id: string }>) => {
                     ))
                   : null}
               </ValidatedField>
-              <Button tag={Link} id="cancel-save" data-cy="entityCreateCancelButton" to="/tache" replace color="info">
+              <Button
+                tag={Link}
+                id="cancel-save"
+                data-cy="entityCreateCancelButton"
+                to={isNew ? '/employe' : '/tache'}
+                replace
+                color="info"
+              >
                 <FontAwesomeIcon icon="arrow-left" />
                 &nbsp;
                 <span className="d-none d-md-inline">

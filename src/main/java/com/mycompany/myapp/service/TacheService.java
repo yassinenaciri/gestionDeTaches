@@ -1,5 +1,6 @@
 package com.mycompany.myapp.service;
 
+import com.mycompany.myapp.domain.Stats;
 import com.mycompany.myapp.domain.Tache;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -31,7 +32,9 @@ public interface TacheService {
      * @param pageable the pagination information.
      * @return the list of entities.
      */
-    Page<Tache> findAll(Pageable pageable, String filter);
+    Page<Tache> findAll(Pageable pageable);
+
+    Page<Tache> findByFiltre(Pageable pageable, String filter);
 
     /**
      * Get the "id" tache.
@@ -49,4 +52,7 @@ public interface TacheService {
      * @param id the id of the entity.
      */
     void delete(Long id);
+
+    Stats findStatsForUser();
+    Stats findStatsByEmploye(Long id);
 }

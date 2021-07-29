@@ -88,6 +88,7 @@ export const EmployeUpdate = (props: RouteComponentProps<{ id: string }>) => {
             <ValidatedForm defaultValues={defaultValues()} onSubmit={saveEntity}>
               {!isNew ? (
                 <ValidatedField
+                  hidden={true}
                   name="id"
                   required
                   readOnly

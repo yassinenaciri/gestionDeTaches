@@ -8,17 +8,15 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import appConfig from 'app/config/constants';
 
 export const BrandIcon = props => (
-  <div {...props} className="brand-icon">
-    <img src="content/images/logo-jhipster.png" alt="Logo" />
+  <div {...props} className="brand-icon ">
+    <img src="content/images/logo.jpg" className={'ffffff'} alt="Logo" />
   </div>
 );
 
 export const Brand = props => (
   <NavbarBrand tag={Link} to="/" className="brand-logo">
     <BrandIcon />
-    <span className="brand-title">
-      <Translate contentKey="global.title">GestionDeTaches</Translate>
-    </span>
+    <span className="brand-title">Gestion De Taches</span>
     <span className="navbar-version">{appConfig.VERSION}</span>
   </NavbarBrand>
 );
@@ -30,6 +28,22 @@ export const Home = props => (
       <span>
         <Translate contentKey="global.menu.home">Home</Translate>
       </span>
+    </NavLink>
+  </NavItem>
+);
+
+export const Taches = props => (
+  <NavItem>
+    <NavLink tag={Link} to="/tache" className="d-flex align-items-center">
+      <span>Taches</span>
+    </NavLink>
+  </NavItem>
+);
+
+export const Employes = props => (
+  <NavItem>
+    <NavLink tag={Link} to="/employe" className="d-flex align-items-center">
+      <span>Employés</span>
     </NavLink>
   </NavItem>
 );

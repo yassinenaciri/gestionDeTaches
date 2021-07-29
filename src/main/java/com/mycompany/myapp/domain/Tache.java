@@ -45,8 +45,8 @@ public class Tache implements Serializable {
     private Instant dateFin;
 
     @JsonIgnoreProperties(value = { "chef", "division", "cadres" }, allowSetters = true)
-    @OneToOne
-    @JoinColumn(unique = true)
+    @ManyToOne
+    //@JoinColumn(unique = true)
     private IService service;
 
     @ManyToOne

@@ -11,7 +11,7 @@ import TacheDeleteDialog from './tache-delete-dialog';
 const Routes = ({ match }) => (
   <>
     <Switch>
-      <ErrorBoundaryRoute exact path={`${match.url}/new`} component={TacheUpdate} />
+      <ErrorBoundaryRoute exact path={`${match.url}/new/:id`} component={TacheUpdate} />
       <ErrorBoundaryRoute exact path={`${match.url}/:id/edit`} component={TacheUpdate} />
       <ErrorBoundaryRoute exact path={`${match.url}/:id`} component={TacheDetail} />
       <ErrorBoundaryRoute path={match.url} component={Tache} />

@@ -6,9 +6,18 @@ import { IQueryParams, createEntitySlice, EntityState, serializeAxiosError } fro
 import { ITache, defaultValue } from 'app/shared/model/tache.model';
 import { useAppSelector } from 'app/config/store';
 import { Etat } from 'app/shared/model/enumerations/etat.model';
+import { IStats } from 'app/shared/model/stats';
 
 const initialState: EntityState<ITache> = {
   links: 'NonCommence',
+  stats: {
+    datasets: [
+      {
+        data: [1, 0, 0, 0, 0, 0],
+      },
+    ],
+    labels: ['Non commencé', 'En cours', 'Terminé', 'Abondonné', 'Validé', 'Refusé'],
+  },
   loading: false,
   errorMessage: null,
   entities: [],
@@ -24,7 +33,7 @@ const apiUrl = 'api/taches';
 export const getEntities = createAsyncThunk('tache/fetch_entity_list', async ({ page, size, sort, query }: IQueryParams, filter?) => {
   const requestUrl = `${apiUrl}${
     sort ? `?page=${page}&size=${size}&sort=${sort}&` : '?'
-  }&filter=${query}&cacheBuster=${new Date().getTime()}`;
+  }filter=${query}&cacheBuster=${new Date().getTime()}`;
   return axios.get<ITache[]>(requestUrl);
 });
 
@@ -33,6 +42,23 @@ export const getEntity = createAsyncThunk(
   async (id: string | number) => {
     const requestUrl = `${apiUrl}/${id}`;
     return axios.get<ITache>(requestUrl);
+  },
+  { serializeError: serializeAxiosError }
+);
+export const getStats = createAsyncThunk(
+  'tache/fetch_stats',
+  async () => {
+    const requestUrl = `${apiUrl}/stats`;
+    return axios.get<IStats>(requestUrl);
+  },
+  { serializeError: serializeAxiosError }
+);
+export const getStatsForEmploye = createAsyncThunk(
+  'tache/fetch_stats_employe',
+  async (id: string | number) => {
+    const requestUrl = `${apiUrl}/stats/employe/${id}`;
+
+    return axios.get<IStats>(requestUrl);
   },
   { serializeError: serializeAxiosError }
 );
@@ -110,6 +136,48 @@ export const TacheSlice = createEntitySlice({
       .addCase(filtrer.fulfilled, (state, action) => {
         state.loading = false;
         state.links = action.payload;
+      })
+      .addCase(getStats.fulfilled, (state, action) => {
+        state.loading = false;
+        // eslint-disable-next-line no-console
+        console.log(action.payload.data.nonCommence);
+        state.stats = {
+          ...state.stats,
+          datasets: [
+            {
+              data: [
+                action.payload.data.nonCommence,
+                action.payload.data.encours,
+                action.payload.data.termine,
+                action.payload.data.abondonne,
+                action.payload.data.valide,
+                action.payload.data.refuse,
+              ],
+            },
+          ],
+        };
+        // state.stats.datasets[0].data = action.payload.data;
+      })
+      .addCase(getStatsForEmploye.fulfilled, (state, action) => {
+        state.loading = false;
+        // eslint-disable-next-line no-console
+        console.log(action.payload.data.nonCommence);
+        state.stats = {
+          ...state.stats,
+          datasets: [
+            {
+              data: [
+                action.payload.data.nonCommence,
+                action.payload.data.encours,
+                action.payload.data.termine,
+                action.payload.data.abondonne,
+                action.payload.data.valide,
+                action.payload.data.refuse,
+              ],
+            },
+          ],
+        };
+        // state.stats.datasets[0].data = action.payload.data;
       })
       .addCase(deleteEntity.fulfilled, state => {
         state.updating = false;

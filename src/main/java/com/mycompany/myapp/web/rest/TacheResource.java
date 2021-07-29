@@ -1,5 +1,6 @@
 package com.mycompany.myapp.web.rest;
 
+import com.mycompany.myapp.domain.Stats;
 import com.mycompany.myapp.domain.Tache;
 import com.mycompany.myapp.domain.enumeration.Etat;
 import com.mycompany.myapp.repository.TacheRepository;
@@ -146,7 +147,12 @@ public class TacheResource {
     @GetMapping("/taches")
     public ResponseEntity<List<Tache>> getAllTaches(Pageable pageable, @RequestParam(required = false) String filter) {
         log.debug("REST request to get a page of Taches");
-        Page<Tache> page = tacheService.findAll(pageable, filter);
+        Page<Tache> page;
+        if (filter != null) {
+            page = tacheService.findByFiltre(pageable, filter);
+        } else {
+            page = tacheService.findAll(pageable);
+        }
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
@@ -162,6 +168,25 @@ public class TacheResource {
         log.debug("REST request to get Tache : {}", id);
         Optional<Tache> tache = tacheService.findOne(id);
         return ResponseUtil.wrapOrNotFound(tache);
+    }
+
+    @GetMapping("/taches/stats")
+    public Stats getStats(@RequestParam(required = false) String id) {
+        log.debug("REST request to get Stats : {}" + id);
+        Stats stats;
+
+        stats = tacheService.findStatsForUser();
+
+        return (stats);
+    }
+
+    @GetMapping("/taches/stats/employe/{id}")
+    public Stats getStatsForEmploye(@PathVariable Long id) {
+        log.debug("REST request to get Stats : {}" + id);
+        Stats stats;
+        stats = tacheService.findStatsByEmploye(id);
+
+        return (stats);
     }
 
     /**
@@ -183,7 +208,6 @@ public class TacheResource {
     @PostMapping("/taches/updateEtat/{id}")
     public ResponseEntity<Tache> updateEtat(@PathVariable Long id, @RequestBody String nouveauEtat) {
         nouveauEtat = nouveauEtat.substring(0, nouveauEtat.length() - 1);
-        log.debug("heeeeeeere : " + id + nouveauEtat);
         Tache result = tacheService.updateEtat(id, nouveauEtat);
         return ResponseEntity
             .ok()

@@ -9,6 +9,7 @@ import {
   ValidateSliceCaseReducers,
 } from '@reduxjs/toolkit';
 import { AxiosError } from 'axios';
+import { IStats } from 'app/shared/model/stats';
 
 /**
  * Model for redux actions with pagination
@@ -74,6 +75,7 @@ export interface EntityState<T> {
   entities: ReadonlyArray<T>;
   entity: T;
   links?: any;
+  stats?: any;
   updating: boolean;
   totalItems?: number;
   updateSuccess: boolean;

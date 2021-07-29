@@ -114,7 +114,7 @@ export const Tache = (props: RouteComponentProps<{ url: string }>) => {
         <Translate contentKey="gestionDeTachesApp.tache.home.title">Taches</Translate>
         <div className="d-flex justify-content-end">
           <div className="filter-group">
-            <select id="filtreEtat" className="form-control" onChange={event => filtrerParEtat(event.target.value)}>
+            <select id="filtreEtat" className="form-control" onChange={event => filtrerParEtat(event.target.value)} defaultValue={filter}>
               <option value="NonCommence">Non Commencé</option>
               <option value="Encours">En cours</option>
               <option value="Termine">Terminé</option>
@@ -127,13 +127,6 @@ export const Tache = (props: RouteComponentProps<{ url: string }>) => {
             <FontAwesomeIcon icon="sync" spin={loading} />{' '}
             <Translate contentKey="gestionDeTachesApp.tache.home.refreshListLabel">Refresh List</Translate>
           </Button>
-          {isChefService && (
-            <Link to={`${match.url}/new`} className="btn btn-primary jh-create-entity" id="jh-create-entity" data-cy="entityCreateButton">
-              <FontAwesomeIcon icon="plus" />
-              &nbsp;
-              <Translate contentKey="gestionDeTachesApp.tache.home.createLabel">Create new Tache</Translate>
-            </Link>
-          )}
         </div>
       </h2>
       <div className="table-responsive">
@@ -206,33 +199,34 @@ export const Tache = (props: RouteComponentProps<{ url: string }>) => {
                           <Translate contentKey="entity.action.view">View</Translate>
                         </span>
                       </Button>
-                      {isChefService && (
-                          <Button
-                            tag={Link}
-                            to={`${match.url}/${tache.id}/edit?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
-                            color="primary"
-                            size="sm"
-                            data-cy="entityEditButton"
-                          >
-                            <FontAwesomeIcon icon="pencil-alt" />{' '}
-                            <span className="d-none d-md-inline">
-                              <Translate contentKey="entity.action.edit">Edit</Translate>
-                            </span>
-                          </Button>
-                        ) && (
-                          <Button
-                            tag={Link}
-                            to={`${match.url}/${tache.id}/delete?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
-                            color="danger"
-                            size="sm"
-                            data-cy="entityDeleteButton"
-                          >
-                            <FontAwesomeIcon icon="trash" />{' '}
-                            <span className="d-none d-md-inline">
-                              <Translate contentKey="entity.action.delete">Delete</Translate>
-                            </span>
-                          </Button>
-                        )}
+                      {isChefService && filter === 'NonCommence' && (
+                        <Button
+                          tag={Link}
+                          to={`${match.url}/${tache.id}/edit?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
+                          color="primary"
+                          size="sm"
+                          data-cy="entityEditButton"
+                        >
+                          <FontAwesomeIcon icon="pencil-alt" />{' '}
+                          <span className="d-none d-md-inline">
+                            <Translate contentKey="entity.action.edit">Edit</Translate>
+                          </span>
+                        </Button>
+                      )}
+                      {isChefService && filter === 'NonCommence' && (
+                        <Button
+                          tag={Link}
+                          to={`${match.url}/${tache.id}/delete?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
+                          color="danger"
+                          size="sm"
+                          data-cy="entityDeleteButton"
+                        >
+                          <FontAwesomeIcon icon="trash" />{' '}
+                          <span className="d-none d-md-inline">
+                            <Translate contentKey="entity.action.delete">Delete</Translate>
+                          </span>
+                        </Button>
+                      )}
 
                       {isCadre && filter === 'NonCommence' && (
                         <Button color="primary" size="sm" onClick={() => modifierEtat(tache.id, 'Encours')}>
