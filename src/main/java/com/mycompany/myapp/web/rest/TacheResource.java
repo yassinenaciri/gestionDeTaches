@@ -157,6 +157,12 @@ public class TacheResource {
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
+    @GetMapping("/taches/getList")
+    public Tache[] getListAllTaches(@RequestParam String filter) {
+        log.debug("REST request to get a List of Taches");
+        return tacheService.findListByFiltre(filter);
+    }
+
     /**
      * {@code GET  /taches/:id} : get the "id" tache.
      *

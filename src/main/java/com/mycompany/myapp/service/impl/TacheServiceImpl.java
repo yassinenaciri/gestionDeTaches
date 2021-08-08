@@ -110,6 +110,24 @@ public class TacheServiceImpl implements TacheService {
         return tacheRepository.findByEtat(pageable, Etat.valueOf(etat));
     }
 
+    @Override
+    public Tache[] findListByFiltre(String etat) {
+        User user = userService.getUserWithAuthorities().get();
+        Set<Authority> authorities = user.getAuthorities();
+        List<String> roles = new ArrayList<>();
+        for (Authority authority : authorities) {
+            roles.add(authority.getName());
+        }
+        if (roles.contains("ROLE_CADRE")) {
+            Employe employe = employeRepository.findEmployeByCompte_Id(user.getId());
+            return tacheRepository.findByEtatAndCadreAffecte(Etat.valueOf(etat), employe);
+        } else if (roles.contains("ROLE_CHEFSERVICE")) {
+            Chef chef = chefRepository.findChefByCompte_Id(user.getId());
+            return tacheRepository.findByEtatAndService(Etat.valueOf(etat), chef.getService());
+        }
+        return null;
+    }
+
     public Page<Tache> findForCadreWithFiltre(Pageable pageable, String etat, Employe employe) {
         return tacheRepository.findByEtatAndCadreAffecte(pageable, Etat.valueOf(etat), employe);
     }
@@ -209,7 +227,6 @@ public class TacheServiceImpl implements TacheService {
             IService service = chefRepository.findChefByCompte_Id(user.getId()).getService();
             return findStatsForService(service);
         }
-
         return null;
     }
 

@@ -26,6 +26,8 @@ export const Employe = (props: RouteComponentProps<{ url: string }>) => {
   const loading = useAppSelector(state => state.employe.loading);
   const totalItems = useAppSelector(state => state.employe.totalItems);
   const isAdmin = useAppSelector(state => hasAnyAuthority(state.authentication.account.authorities, [AUTHORITIES.ADMIN]));
+  const isChefService = useAppSelector(state => hasAnyAuthority(state.authentication.account.authorities, [AUTHORITIES.CHEFSERVICE]));
+  const isCadre = useAppSelector(state => hasAnyAuthority(state.authentication.account.authorities, [AUTHORITIES.CADRE]));
 
   const getAllEntities = () => {
     dispatch(
@@ -111,12 +113,12 @@ export const Employe = (props: RouteComponentProps<{ url: string }>) => {
                 <th className="hand" onClick={sort('nomComplet')}>
                   <Translate contentKey="gestionDeTachesApp.employe.nomComplet">Nom Complet</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
-                <th>
-                  <Translate contentKey="gestionDeTachesApp.employe.compte">Compte</Translate> <FontAwesomeIcon icon="sort" />
-                </th>
-                <th>
-                  <Translate contentKey="gestionDeTachesApp.employe.service">Service</Translate> <FontAwesomeIcon icon="sort" />
-                </th>
+                <th>Email</th>
+                {!isCadre && !isChefService && (
+                  <th>
+                    <Translate contentKey="gestionDeTachesApp.employe.service">Service</Translate> <FontAwesomeIcon icon="sort" />
+                  </th>
+                )}
                 <th>Occupé</th>
                 <th />
               </tr>
@@ -126,7 +128,9 @@ export const Employe = (props: RouteComponentProps<{ url: string }>) => {
                 <tr key={`entity-${i}`} data-cy="entityTable">
                   <td>{employe.nomComplet}</td>
                   <td>{employe.compte ? employe.compte.email : ''}</td>
-                  <td>{employe.service ? <Link to={`i-service/${employe.service.id}`}>{employe.service.nomService}</Link> : ''}</td>
+                  {!isCadre && !isChefService && (
+                    <td>{employe.service ? <Link to={`i-service/${employe.service.id}`}>{employe.service.nomService}</Link> : ''}</td>
+                  )}
                   <td>{listeIdEmployeOccupe.indexOf(employe.id.toString()) >= 0 ? 'Oui' : 'Non'}</td>
                   <td className="text-right">
                     <div className="btn-group flex-btn-group-container">

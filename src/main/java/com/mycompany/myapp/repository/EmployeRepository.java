@@ -2,6 +2,7 @@ package com.mycompany.myapp.repository;
 
 import com.mycompany.myapp.domain.Employe;
 import com.mycompany.myapp.domain.IService;
+import java.util.List;
 import java.util.Set;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,4 +22,5 @@ public interface EmployeRepository extends JpaRepository<Employe, Long> {
     Page<Employe> findByService(Pageable pageable, IService service);
 
     Employe findEmployeById(Long id);
+    List<Employe> findByService(IService service);
 }

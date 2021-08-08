@@ -14,6 +14,7 @@ const initialState: EntityState<ITache> = {
     datasets: [
       {
         data: [1, 0, 0, 0, 0, 0],
+        backgroundColor: ['#C0C0C0', '#275094', '#00FF00', '#FF7300', '#008000', '#db0f2b'],
       },
     ],
     labels: ['Non commencé', 'En cours', 'Terminé', 'Abondonné', 'Validé', 'Refusé'],
@@ -21,6 +22,7 @@ const initialState: EntityState<ITache> = {
   loading: false,
   errorMessage: null,
   entities: [],
+  allEntities: [],
   entity: defaultValue,
   updating: false,
   totalItems: 0,
@@ -34,6 +36,12 @@ export const getEntities = createAsyncThunk('tache/fetch_entity_list', async ({ 
   const requestUrl = `${apiUrl}${
     sort ? `?page=${page}&size=${size}&sort=${sort}&` : '?'
   }filter=${query}&cacheBuster=${new Date().getTime()}`;
+  return axios.get<ITache[]>(requestUrl);
+});
+
+// retourne une liste au lieu d'une page avec etat== filtre
+export const getALlEntities = createAsyncThunk('tache/fetch_allEntity_list', async (filter: string) => {
+  const requestUrl = `${apiUrl}/getList?filter=${filter}`;
   return axios.get<ITache[]>(requestUrl);
 });
 
@@ -137,6 +145,10 @@ export const TacheSlice = createEntitySlice({
         state.loading = false;
         state.links = action.payload;
       })
+      .addCase(getALlEntities.fulfilled, (state, action) => {
+        state.loading = false;
+        state.allEntities = action.payload.data;
+      })
       .addCase(getStats.fulfilled, (state, action) => {
         state.loading = false;
         // eslint-disable-next-line no-console
@@ -153,6 +165,7 @@ export const TacheSlice = createEntitySlice({
                 action.payload.data.valide,
                 action.payload.data.refuse,
               ],
+              backgroundColor: ['#C0C0C0', '#275094', '#00FF00', '#FF7300', '#008000', '#db0f2b'],
             },
           ],
         };
@@ -174,6 +187,7 @@ export const TacheSlice = createEntitySlice({
                 action.payload.data.valide,
                 action.payload.data.refuse,
               ],
+              backgroundColor: ['#C0C0C0', '#275094', '#00FF00', '#FF7300', '#008000', '#db0f2b'],
             },
           ],
         };
@@ -198,7 +212,7 @@ export const TacheSlice = createEntitySlice({
         state.updateSuccess = true;
         state.entity = action.payload.data;
       })
-      .addMatcher(isPending(getEntities, getEntity), state => {
+      .addMatcher(isPending(getEntities, getEntity, getALlEntities), state => {
         state.errorMessage = null;
         state.updateSuccess = false;
         state.loading = true;

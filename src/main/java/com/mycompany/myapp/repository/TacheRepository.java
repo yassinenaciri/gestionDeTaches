@@ -19,7 +19,9 @@ public interface TacheRepository extends JpaRepository<Tache, Long> {
     Page<Tache> findByEtat(Pageable pageable, Etat etat);
     Page<Tache> findAll(Pageable pageable);
     Page<Tache> findByEtatAndServiceIn(Pageable pageable, Etat etat, List<IService> services);
+    Tache[] findByEtatAndService(Etat etat, IService service);
     Page<Tache> findByEtatAndCadreAffecte(Pageable pageable, Etat etat, Employe cadre);
+    Tache[] findByEtatAndCadreAffecte(Etat etat, Employe cadre);
 
     Page<Tache> findByCadreAffecte(Pageable pageable, Employe employe);
 

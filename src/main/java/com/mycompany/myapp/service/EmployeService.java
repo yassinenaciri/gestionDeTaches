@@ -1,5 +1,6 @@
 package com.mycompany.myapp.service;
 
+import com.mycompany.myapp.domain.Classement;
 import com.mycompany.myapp.domain.Employe;
 import com.mycompany.myapp.domain.IService;
 import java.util.List;
@@ -35,7 +36,7 @@ public interface EmployeService {
      */
     Page<Employe> findAll(Pageable pageable);
 
-    List<Employe> findClassementByService(IService service);
+    Classement[] findClassementByService();
 
     /**
      * Get the "id" employe.

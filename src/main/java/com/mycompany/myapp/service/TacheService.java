@@ -35,7 +35,7 @@ public interface TacheService {
     Page<Tache> findAll(Pageable pageable);
 
     Page<Tache> findByFiltre(Pageable pageable, String filter);
-
+    Tache[] findListByFiltre(String filter);
     /**
      * Get the "id" tache.
      *

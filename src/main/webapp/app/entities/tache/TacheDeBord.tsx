@@ -4,7 +4,7 @@ import { Button, Col, Row, Table } from 'reactstrap';
 import { Translate, TextFormat, getSortState, JhiPagination, JhiItemCount } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { filtrer, getEntities, updateEtat } from './tache.reducer';
+import { filtrer, getALlEntities, updateEtat } from './tache.reducer';
 import { ITache } from 'app/shared/model/tache.model';
 import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT, AUTHORITIES } from 'app/config/constants';
 import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/shared/util/pagination.constants';
@@ -13,31 +13,23 @@ import { useAppDispatch, useAppSelector } from 'app/config/store';
 import { Etat } from 'app/shared/model/enumerations/etat.model';
 import { hasAnyAuthority } from 'app/shared/auth/private-route';
 
-export const Tache = (props: RouteComponentProps<{ url: string }>) => {
+export const TacheDeBord = props => {
   const dispatch = useAppDispatch();
-
-  const [paginationState, setPaginationState] = useState(
-    overridePaginationStateWithQueryParams(getSortState(props.location, ITEMS_PER_PAGE, 'id'), props.location.search)
-  );
-
-  const tacheList = useAppSelector(state => state.tache.entities);
-
+  const tacheList = useAppSelector(state => state.tache.allEntities);
   const loading = useAppSelector(state => state.tache.loading);
-  const totalItems = useAppSelector(state => state.tache.totalItems);
-  let filter = useAppSelector(state => state.tache.links);
   const isChefService = useAppSelector(state => hasAnyAuthority(state.authentication.account.authorities, [AUTHORITIES.CHEFSERVICE]));
   const isCadre = useAppSelector(state => hasAnyAuthority(state.authentication.account.authorities, [AUTHORITIES.CADRE]));
-  const _MS_PER_DAY = 1000 * 60 * 60 * 24;
-  const getAllEntities = () => {
-    dispatch(
-      getEntities({
-        page: paginationState.activePage - 1,
-        size: paginationState.itemsPerPage,
-        sort: `${paginationState.sort},${paginationState.order}`,
-        query: filter,
-      })
-    );
+
+  const getEntities = () => {
+    dispatch(getALlEntities(props.filter));
   };
+
+  useEffect(() => {
+    getEntities();
+  }, []);
+
+  const _MS_PER_DAY = 1000 * 60 * 60 * 24;
+
   function dateDiffInDays(a, b) {
     // eslint-disable-next-line no-console
     console.log(a);
@@ -51,59 +43,6 @@ export const Tache = (props: RouteComponentProps<{ url: string }>) => {
     return (utc2 - utc1) / _MS_PER_DAY;
   }
 
-  const sortEntities = () => {
-    getAllEntities();
-    const endURL = `?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`;
-    if (props.location.search !== endURL) {
-      props.history.push(`${props.location.pathname}${endURL}`);
-    }
-  };
-
-  useEffect(() => {
-    sortEntities();
-  }, [paginationState.activePage, paginationState.order, paginationState.sort]);
-
-  useEffect(() => {
-    const params = new URLSearchParams(props.location.search);
-    const page = params.get('page');
-    const sort = params.get(SORT);
-    if (page && sort) {
-      const sortSplit = sort.split(',');
-      setPaginationState({
-        ...paginationState,
-        activePage: +page,
-        sort: sortSplit[0],
-        order: sortSplit[1],
-      });
-    }
-  }, [props.location.search]);
-
-  const sort = p => () => {
-    setPaginationState({
-      ...paginationState,
-      order: paginationState.order === ASC ? DESC : ASC,
-      sort: p,
-    });
-  };
-  const filtrerParEtat = etat => {
-    filter = etat;
-    dispatch(filtrer(etat));
-    dispatch(
-      getEntities({
-        page: paginationState.activePage - 1,
-        size: paginationState.itemsPerPage,
-        sort: `${paginationState.sort},${paginationState.order}`,
-        query: etat,
-      })
-    );
-  };
-
-  const handlePagination = currentPage =>
-    setPaginationState({
-      ...paginationState,
-      activePage: currentPage,
-    });
-
   const modifierEtat = async (Id, NouveauEtat) => {
     await dispatch(
       updateEtat({
@@ -111,11 +50,7 @@ export const Tache = (props: RouteComponentProps<{ url: string }>) => {
         nouveauEtat: NouveauEtat,
       })
     );
-    handleSyncList();
-  };
-
-  const handleSyncList = () => {
-    sortEntities();
+    getEntities();
   };
 
   const { match } = props;
@@ -124,45 +59,29 @@ export const Tache = (props: RouteComponentProps<{ url: string }>) => {
     <div>
       <h2 id="tache-heading" data-cy="TacheHeading">
         <Translate contentKey="gestionDeTachesApp.tache.home.title">Taches</Translate>
-        <div className="d-flex justify-content-end">
-          <div className="filter-group">
-            <select id="filtreEtat" className="form-control" onChange={event => filtrerParEtat(event.target.value)} defaultValue={filter}>
-              <option value="NonCommence">Non Commencé</option>
-              <option value="Encours">En cours</option>
-              <option value="Termine">Terminé</option>
-              <option value="Abondonne">Abondonné</option>
-              <option value="Valide">Validé</option>
-              <option value="Refuse">Refusé</option>
-            </select>
-          </div>
-          <Button className="mr-2" color="info" onClick={handleSyncList} disabled={loading}>
-            <FontAwesomeIcon icon="sync" spin={loading} />{' '}
-            <Translate contentKey="gestionDeTachesApp.tache.home.refreshListLabel">Refresh List</Translate>
-          </Button>
-        </div>
       </h2>
       <div className="table-responsive">
         {tacheList && tacheList.length > 0 ? (
           <Table responsive>
             <thead>
               <tr>
-                <th className="hand" onClick={sort('intitule')}>
+                <th className="hand">
                   <Translate contentKey="gestionDeTachesApp.tache.intitule">Intitule</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
-                <th className="hand" onClick={sort('dateLimite')}>
+                <th className="hand">
                   <Translate contentKey="gestionDeTachesApp.tache.dateLimite">Date Limite</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
 
-                <th className="hand" onClick={sort('etat')}>
+                <th className="hand">
                   <Translate contentKey="gestionDeTachesApp.tache.etat">Etat</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
-                {filter !== 'NonCommence' && (
-                  <th className="hand" onClick={sort('dateDebut')}>
+                {props.filter !== 'NonCommence' && (
+                  <th className="hand">
                     <Translate contentKey="gestionDeTachesApp.tache.dateDebut">Date Debut</Translate> <FontAwesomeIcon icon="sort" />
                   </th>
                 )}
-                {filter !== 'Encours' && filter !== 'NonCommence' && filter !== 'Abondonne' && (
-                  <th className="hand" onClick={sort('dateFin')}>
+                {props.filter !== 'Encours' && props.filter !== 'NonCommence' && props.filter !== 'Abondonne' && (
+                  <th className="hand">
                     <Translate contentKey="gestionDeTachesApp.tache.dateFin">Date Fin</Translate> <FontAwesomeIcon icon="sort" />
                   </th>
                 )}
@@ -177,7 +96,7 @@ export const Tache = (props: RouteComponentProps<{ url: string }>) => {
                     <FontAwesomeIcon icon="sort" />
                   </th>
                 )}
-                {filter !== 'Encours' && filter !== 'NonCommence' && filter !== 'Abondonne' && <th>Ecart</th>}
+                {props.filter !== 'Encours' && props.filter !== 'NonCommence' && props.filter !== 'Abondonne' && <th>Ecart</th>}
                 <th />
               </tr>
             </thead>
@@ -190,10 +109,10 @@ export const Tache = (props: RouteComponentProps<{ url: string }>) => {
                   <td>
                     <Translate contentKey={`gestionDeTachesApp.Etat.${tache.etat}`} />
                   </td>
-                  {filter !== 'NonCommence' && (
+                  {props.filter !== 'NonCommence' && (
                     <td>{tache.dateDebut ? <TextFormat type="date" value={tache.dateDebut} format={APP_DATE_FORMAT} /> : null}</td>
                   )}
-                  {filter !== 'Encours' && filter !== 'NonCommence' && filter !== 'Abondonne' && (
+                  {props.filter !== 'Encours' && props.filter !== 'NonCommence' && props.filter !== 'Abondonne' && (
                     <td>{tache.dateFin ? <TextFormat type="date" value={tache.dateFin} format={APP_DATE_FORMAT} /> : null}</td>
                   )}
                   {!isCadre && !isChefService && (
@@ -204,67 +123,40 @@ export const Tache = (props: RouteComponentProps<{ url: string }>) => {
                       {tache.cadreAffecte ? <Link to={`employe/${tache.cadreAffecte.id}`}>{tache.cadreAffecte.nomComplet}</Link> : ''}
                     </td>
                   )}
-                  {filter !== 'Encours' && filter !== 'NonCommence' && filter !== 'Abondonne' && (
+                  {props.filter !== 'Encours' && props.filter !== 'NonCommence' && props.filter !== 'Abondonne' && (
                     <td>{dateDiffInDays(new Date(tache.dateFin), new Date(tache.dateLimite))}</td>
                   )}
+
                   <td className="text-right">
                     <div className="btn-group flex-btn-group-container">
-                      <Button tag={Link} to={`${match.url}/${tache.id}`} color="info" size="sm" data-cy="entityDetailsButton">
+                      <Button tag={Link} to={`taches/${tache.id}`} color="info" size="sm" data-cy="entityDetailsButton">
                         <FontAwesomeIcon icon="eye" />{' '}
                         <span className="d-none d-md-inline">
                           <Translate contentKey="entity.action.view">View</Translate>
                         </span>
                       </Button>
-                      {isChefService && filter === 'NonCommence' && (
-                        <Button
-                          tag={Link}
-                          to={`${match.url}/${tache.id}/edit?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
-                          color="primary"
-                          size="sm"
-                          data-cy="entityEditButton"
-                        >
-                          <FontAwesomeIcon icon="pencil-alt" />{' '}
-                          <span className="d-none d-md-inline">
-                            <Translate contentKey="entity.action.edit">Edit</Translate>
-                          </span>
-                        </Button>
-                      )}
-                      {isChefService && filter === 'NonCommence' && (
-                        <Button
-                          tag={Link}
-                          to={`${match.url}/${tache.id}/delete?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
-                          color="danger"
-                          size="sm"
-                          data-cy="entityDeleteButton"
-                        >
-                          <FontAwesomeIcon icon="trash" />{' '}
-                          <span className="d-none d-md-inline">
-                            <Translate contentKey="entity.action.delete">Delete</Translate>
-                          </span>
-                        </Button>
-                      )}
 
-                      {isCadre && filter === 'NonCommence' && (
+                      {isCadre && props.filter === 'NonCommence' && (
                         <Button color="primary" size="sm" onClick={() => modifierEtat(tache.id, 'Encours')}>
                           <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Commencer</span>
                         </Button>
                       )}
-                      {isCadre && filter === 'Encours' && (
+                      {isCadre && props.filter === 'Encours' && (
                         <Button color="primary" size="sm" onClick={() => modifierEtat(tache.id, 'Termine')}>
                           <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Terminer</span>
                         </Button>
                       )}
-                      {isCadre && filter === 'Encours' && (
+                      {isCadre && props.filter === 'Encours' && (
                         <Button color="primary" size="sm" onClick={() => modifierEtat(tache.id, 'Abondonne')}>
                           <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Abondonner</span>
                         </Button>
                       )}
-                      {isChefService && filter === 'Termine' && (
+                      {isChefService && props.filter === 'Termine' && (
                         <Button color="primary" size="sm" onClick={() => modifierEtat(tache.id, 'Valide')}>
                           <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Valider</span>
                         </Button>
                       )}
-                      {isChefService && filter === 'Termine' && (
+                      {isChefService && props.filter === 'Termine' && (
                         <Button color="primary" size="sm" onClick={() => modifierEtat(tache.id, 'Refuse')}>
                           <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Refuser</span>
                         </Button>
@@ -283,26 +175,8 @@ export const Tache = (props: RouteComponentProps<{ url: string }>) => {
           )
         )}
       </div>
-      {totalItems ? (
-        <div className={tacheList && tacheList.length > 0 ? '' : 'd-none'}>
-          <Row className="justify-content-center">
-            <JhiItemCount page={paginationState.activePage} total={totalItems} itemsPerPage={paginationState.itemsPerPage} i18nEnabled />
-          </Row>
-          <Row className="justify-content-center">
-            <JhiPagination
-              activePage={paginationState.activePage}
-              onSelect={handlePagination}
-              maxButtons={5}
-              itemsPerPage={paginationState.itemsPerPage}
-              totalItems={totalItems}
-            />
-          </Row>
-        </div>
-      ) : (
-        ''
-      )}
     </div>
   );
 };
 
-export default Tache;
+export default TacheDeBord;

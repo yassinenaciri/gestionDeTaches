@@ -6,12 +6,14 @@ import { IQueryParams, createEntitySlice, EntityState, serializeAxiosError } fro
 import { IEmploye, defaultValue } from 'app/shared/model/employe.model';
 import { ITache } from 'app/shared/model/tache.model';
 import { activateAction } from 'app/modules/account/activate/activate.reducer';
+import { IClassement } from 'app/shared/model/classement';
 
 const initialState: EntityState<IEmploye> = {
   loading: false,
   errorMessage: null,
   links: [],
   entities: [],
+  classement: [],
   entity: defaultValue,
   updating: false,
   totalItems: 0,
@@ -25,6 +27,11 @@ const apiUrl = 'api/employes';
 export const getEntities = createAsyncThunk('employe/fetch_entity_list', async ({ page, size, sort }: IQueryParams) => {
   const requestUrl = `${apiUrl}${sort ? `?page=${page}&size=${size}&sort=${sort}&` : '?'}cacheBuster=${new Date().getTime()}`;
   return axios.get<IEmploye[]>(requestUrl);
+});
+
+export const getClassement = createAsyncThunk('employe/fetch_classement', async () => {
+  const requestUrl = `${apiUrl}/classement`;
+  return axios.get<IClassement[]>(requestUrl);
 });
 
 export const getEmployeOccupe = createAsyncThunk('employe/fetch_employe_occupe', async () => {
@@ -103,6 +110,10 @@ export const EmployeSlice = createEntitySlice({
         state.updateSuccess = true;
         state.entity = {};
       })
+      .addCase(getClassement.fulfilled, (state, action) => {
+        state.updating = false;
+        state.classement = action.payload.data;
+      })
       .addCase(getEmployeOccupe.fulfilled, (state, action) => {
         state.links = action.payload;
       })
@@ -120,7 +131,7 @@ export const EmployeSlice = createEntitySlice({
         state.updateSuccess = true;
         state.entity = action.payload.data;
       })
-      .addMatcher(isPending(getEntities, getEntity), state => {
+      .addMatcher(isPending(getEntities, getEntity, getClassement), state => {
         state.errorMessage = null;
         state.updateSuccess = false;
         state.loading = true;

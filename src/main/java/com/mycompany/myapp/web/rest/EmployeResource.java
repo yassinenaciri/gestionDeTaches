@@ -1,5 +1,6 @@
 package com.mycompany.myapp.web.rest;
 
+import com.mycompany.myapp.domain.Classement;
 import com.mycompany.myapp.domain.Employe;
 import com.mycompany.myapp.repository.EmployeRepository;
 import com.mycompany.myapp.service.EmployeService;
@@ -163,6 +164,11 @@ public class EmployeResource {
         log.debug("REST request to get Employe : {}", id);
         Optional<Employe> employe = employeService.findOne(id);
         return ResponseUtil.wrapOrNotFound(employe);
+    }
+
+    @GetMapping("/employes/classement")
+    public Classement[] getClassement() {
+        return employeService.findClassementByService();
     }
 
     /**

@@ -2,6 +2,7 @@ package com.mycompany.myapp.domain;
 
 public class Stats {
 
+    long id;
     private int NonCommence;
     private int Encours;
     private int Termine;

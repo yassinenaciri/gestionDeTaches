@@ -88,7 +88,7 @@ export const TacheUpdate = (props: RouteComponentProps<{ id: string }>) => {
       <Row className="justify-content-center">
         <Col md="8">
           <h2 id="gestionDeTachesApp.tache.home.createOrEditLabel" data-cy="TacheCreateUpdateHeading">
-            <Translate contentKey="gestionDeTachesApp.tache.home.createOrEditLabel">Create or edit a Tache</Translate>
+            Créer ou modifier une Tache
           </h2>
         </Col>
       </Row>

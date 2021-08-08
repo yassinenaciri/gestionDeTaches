@@ -27,13 +27,16 @@ public class EmployeServiceImpl implements EmployeService {
     private final UserService userService;
     private final ChefRepository chefRepository;
     private final TacheRepository tacheRepository;
+    private final TacheServiceImpl tacheService;
 
     public EmployeServiceImpl(
         EmployeRepository employeRepository,
         UserService userService,
         ChefRepository chefRepository,
-        TacheRepository tacheRepository
+        TacheRepository tacheRepository,
+        TacheServiceImpl tacheService
     ) {
+        this.tacheService = tacheService;
         this.employeRepository = employeRepository;
         this.tacheRepository = tacheRepository;
         this.userService = userService;
@@ -92,9 +95,45 @@ public class EmployeServiceImpl implements EmployeService {
         return null;
     }
 
+    private void tri_bulle(Classement[] tab) {
+        int taille = tab.length;
+        Classement tmp = null;
+        for (int i = 0; i < taille; i++) {
+            for (int j = 1; j < (taille - i); j++) {
+                if (tab[j].getNbreTachesTermine() > tab[j - 1].getNbreTachesTermine()) {
+                    tmp = tab[j - 1];
+                    tab[j - 1] = tab[j];
+                    tab[j] = tmp;
+                }
+            }
+        }
+    }
+
     @Override
-    public List<Employe> findClassementByService(IService service) {
-        return null;
+    public Classement[] findClassementByService() {
+        User user = userService.getUserWithAuthorities().get();
+        Set<Authority> authorities = user.getAuthorities();
+        List<String> roles = new ArrayList<>();
+        for (Authority authority : authorities) {
+            roles.add(authority.getName());
+        }
+        IService service = null;
+        if (roles.contains("ROLE_CHEFSERVICE")) {
+            service = chefRepository.findChefByCompte_Id(user.getId()).getService();
+        } else if (roles.contains("ROLE_CADRE")) {
+            service = employeRepository.findEmployeByCompte_Id(user.getId()).getService();
+        }
+        Classement[] classement = new Classement[5];
+        List<Employe> employes = employeRepository.findByService(service);
+        Classement[] classementGlobal = new Classement[employes.size()];
+        for (int i = 0; i < employes.size(); i++) {
+            classementGlobal[i] = new Classement(employes.get(i), tacheService.findStatsForEmploye(employes.get(i)).getTermine());
+        }
+        tri_bulle(classementGlobal);
+        for (int i = 0; i < classementGlobal.length && i < 5 && classementGlobal[i] != null; i++) {
+            classement[i] = classementGlobal[i];
+        }
+        return classement;
     }
 
     @Transactional(readOnly = true)
