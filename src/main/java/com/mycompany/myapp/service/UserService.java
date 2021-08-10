@@ -336,6 +336,19 @@ public class UserService {
         return authorityRepository.findAll().stream().map(Authority::getName).collect(Collectors.toList());
     }
 
+    @Transactional
+    public void setRole(long id, String role) {
+        User user = userRepository.findById(id).get();
+        Set<Authority> authorities = new HashSet<>();
+        log.debug(authorityRepository.findAll().toString());
+        Authority authority = authorityRepository.findById(role).get();
+        log.debug(authority.toString());
+        authorities.add(authority);
+        user.setAuthorities(authorities);
+
+        return;
+    }
+
     private void clearUserCaches(User user) {
         Objects.requireNonNull(cacheManager.getCache(UserRepository.USERS_BY_LOGIN_CACHE)).evict(user.getLogin());
         if (user.getEmail() != null) {

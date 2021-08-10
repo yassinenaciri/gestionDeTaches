@@ -23,12 +23,12 @@ export const Dashboard = () => {
     <div>
       ≈
       <Row>
-        <Col md="1" className="pad"></Col>
+        <Col md="0.5" className="pad"></Col>
 
-        <Col md="4" className="pad">
+        <Col md="3" className="pad">
           <Chart />
         </Col>
-        <Col md="0.5" className="pad"></Col>
+        <Col md="1" className="pad"></Col>
         <Col md="6">
           <Classement />
         </Col>

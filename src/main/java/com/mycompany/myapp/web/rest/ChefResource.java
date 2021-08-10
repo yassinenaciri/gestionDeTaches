@@ -1,8 +1,11 @@
 package com.mycompany.myapp.web.rest;
 
 import com.mycompany.myapp.domain.Chef;
+import com.mycompany.myapp.domain.User;
 import com.mycompany.myapp.repository.ChefRepository;
+import com.mycompany.myapp.security.AuthoritiesConstants;
 import com.mycompany.myapp.service.ChefService;
+import com.mycompany.myapp.service.UserService;
 import com.mycompany.myapp.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -44,7 +47,10 @@ public class ChefResource {
 
     private final ChefRepository chefRepository;
 
-    public ChefResource(ChefService chefService, ChefRepository chefRepository) {
+    private UserService userService;
+
+    public ChefResource(ChefService chefService, ChefRepository chefRepository, UserService userService) {
+        this.userService = userService;
         this.chefService = chefService;
         this.chefRepository = chefRepository;
     }
@@ -63,6 +69,10 @@ public class ChefResource {
             throw new BadRequestAlertException("A new chef cannot already have an ID", ENTITY_NAME, "idexists");
         }
         Chef result = chefService.save(chef);
+        User user = chef.getCompte();
+        if (user != null) {
+            userService.setRole(user.getId(), chef.getRole());
+        }
         return ResponseEntity
             .created(new URI("/api/chefs/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
@@ -95,6 +105,10 @@ public class ChefResource {
         }
 
         Chef result = chefService.save(chef);
+        User user = chef.getCompte();
+        if (user != null) {
+            userService.setRole(user.getId(), chef.getRole());
+        }
         return ResponseEntity
             .ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, chef.getId().toString()))
@@ -130,7 +144,10 @@ public class ChefResource {
         }
 
         Optional<Chef> result = chefService.partialUpdate(chef);
-
+        User user = chef.getCompte();
+        if (user != null) {
+            userService.setRole(user.getId(), chef.getRole());
+        }
         return ResponseUtil.wrapOrNotFound(
             result,
             HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, chef.getId().toString())

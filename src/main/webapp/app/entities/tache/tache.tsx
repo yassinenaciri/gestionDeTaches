@@ -28,6 +28,7 @@ export const Tache = (props: RouteComponentProps<{ url: string }>) => {
   const isChefService = useAppSelector(state => hasAnyAuthority(state.authentication.account.authorities, [AUTHORITIES.CHEFSERVICE]));
   const isCadre = useAppSelector(state => hasAnyAuthority(state.authentication.account.authorities, [AUTHORITIES.CADRE]));
   const _MS_PER_DAY = 1000 * 60 * 60 * 24;
+  const _MS_PER_HOUR = 1000 * 60 * 60;
   const getAllEntities = () => {
     dispatch(
       getEntities({
@@ -47,8 +48,41 @@ export const Tache = (props: RouteComponentProps<{ url: string }>) => {
 
     // eslint-disable-next-line no-console
     console.log(utc2 - utc1);
+    const result = (utc2 - utc1) / _MS_PER_DAY;
+    if (result > +0) {
+      return result;
+    } else {
+      return -result;
+    }
+  }
 
-    return (utc2 - utc1) / _MS_PER_DAY;
+  function enRetard(a, b) {
+    // eslint-disable-next-line no-console
+    console.log(a);
+    // Discard the time and time-zone information.
+    const utc1 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate(), a.getHours());
+    const utc2 = Date.UTC(b.getFullYear(), b.getMonth(), b.getDate(), b.getHours());
+
+    return utc2 - utc1 < 0;
+  }
+
+  function dateDiffInHours(a, b) {
+    // eslint-disable-next-line no-console
+    console.log(a);
+    // Discard the time and time-zone information.
+    const utc1 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate(), a.getHours());
+    const utc2 = Date.UTC(b.getFullYear(), b.getMonth(), b.getDate(), b.getHours());
+
+    // eslint-disable-next-line no-console
+    console.log(utc2 - utc1);
+    const reste = (utc2 - utc1) % _MS_PER_DAY;
+
+    const result = reste / _MS_PER_HOUR;
+    if (result >= 0) {
+      return result;
+    } else {
+      return -result;
+    }
   }
 
   const sortEntities = () => {
@@ -205,7 +239,11 @@ export const Tache = (props: RouteComponentProps<{ url: string }>) => {
                     </td>
                   )}
                   {filter !== 'Encours' && filter !== 'NonCommence' && filter !== 'Abondonne' && (
-                    <td>{dateDiffInDays(new Date(tache.dateFin), new Date(tache.dateLimite))}</td>
+                    <td>
+                      {enRetard(new Date(tache.dateFin), new Date(tache.dateLimite)) ? 'Retard de ' : 'En avance de'}{' '}
+                      {dateDiffInDays(new Date(tache.dateFin), new Date(tache.dateLimite))} jrs{' '}
+                      {dateDiffInHours(new Date(tache.dateFin), new Date(tache.dateLimite))} hrs
+                    </td>
                   )}
                   <td className="text-right">
                     <div className="btn-group flex-btn-group-container">

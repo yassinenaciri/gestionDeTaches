@@ -25,7 +25,12 @@ const LoginModal = (props: ILoginModalProps) => {
   const { loginError } = props;
 
   return (
-    <Form onSubmit={handleSubmit(login)}>
+    <Form
+      style={{
+        marginLeft: '60%',
+      }}
+      onSubmit={handleSubmit(login)}
+    >
       <ModalHeader id="login-title" data-cy="loginTitle">
         <Translate contentKey="login.title">Sign in</Translate>
       </ModalHeader>

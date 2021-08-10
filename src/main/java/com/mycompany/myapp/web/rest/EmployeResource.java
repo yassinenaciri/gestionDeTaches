@@ -2,8 +2,11 @@ package com.mycompany.myapp.web.rest;
 
 import com.mycompany.myapp.domain.Classement;
 import com.mycompany.myapp.domain.Employe;
+import com.mycompany.myapp.domain.User;
 import com.mycompany.myapp.repository.EmployeRepository;
+import com.mycompany.myapp.security.AuthoritiesConstants;
 import com.mycompany.myapp.service.EmployeService;
+import com.mycompany.myapp.service.UserService;
 import com.mycompany.myapp.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -44,9 +47,12 @@ public class EmployeResource {
 
     private final EmployeRepository employeRepository;
 
-    public EmployeResource(EmployeService employeService, EmployeRepository employeRepository) {
+    private final UserService userService;
+
+    public EmployeResource(EmployeService employeService, EmployeRepository employeRepository, UserService userService) {
         this.employeService = employeService;
         this.employeRepository = employeRepository;
+        this.userService = userService;
     }
 
     /**
@@ -63,6 +69,10 @@ public class EmployeResource {
             throw new BadRequestAlertException("A new employe cannot already have an ID", ENTITY_NAME, "idexists");
         }
         Employe result = employeService.save(employe);
+        User user = employe.getCompte();
+        if (user != null) {
+            userService.setRole(user.getId(), AuthoritiesConstants.CADRE);
+        }
         return ResponseEntity
             .created(new URI("/api/employes/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
@@ -97,6 +107,10 @@ public class EmployeResource {
         }
 
         Employe result = employeService.save(employe);
+        User user = employe.getCompte();
+        if (user != null) {
+            userService.setRole(user.getId(), AuthoritiesConstants.CADRE);
+        }
         return ResponseEntity
             .ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, employe.getId().toString()))
@@ -132,6 +146,10 @@ public class EmployeResource {
         }
 
         Optional<Employe> result = employeService.partialUpdate(employe);
+        User user = employe.getCompte();
+        if (user != null) {
+            userService.setRole(user.getId(), AuthoritiesConstants.CADRE);
+        }
 
         return ResponseUtil.wrapOrNotFound(
             result,
