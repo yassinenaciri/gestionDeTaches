@@ -206,8 +206,14 @@ public class UserService {
         for (Authority authority : authorities) {
             roles.add(authority.getName());
         }
-        if (roles.contains("ROLE_CHEFDESERVICE")) {
+        if (
+            roles.contains("ROLE_CHEFSERVICE") ||
+            roles.contains("ROLE_CHEFPOLE") ||
+            roles.contains("ROLE_CHEFDIVISION") ||
+            roles.contains("ROLE_DIRECTEUR")
+        ) {
             Chef chef = new Chef();
+            chef.setRole(roles.get(0));
             chef.setCompte(user);
             chef.setNomComplet(user.getFirstName().concat(" ").concat(user.getLastName()));
             chefRepository.save(chef);

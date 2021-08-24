@@ -83,7 +83,6 @@ export const TacheUpdate = (props: RouteComponentProps<{ id: string }>) => {
           cadreAffecteId: tacheEntity?.cadreAffecte?.id,
         };
 
-  // @ts-ignore
   return (
     <div>
       <Row className="justify-content-center">

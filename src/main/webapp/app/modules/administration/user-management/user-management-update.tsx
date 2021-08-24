@@ -25,6 +25,7 @@ export const UserManagementUpdate = (props: RouteComponentProps<{ login: string 
       dispatch(getUser(props.match.params.login));
     }
     dispatch(getRoles());
+    dispatch(getEntities({ page: 0, size: 20, sort: 'id,asc' }));
     return () => {
       dispatch(reset());
     };

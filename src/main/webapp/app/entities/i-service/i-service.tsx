@@ -30,6 +30,13 @@ export const IService = (props: RouteComponentProps<{ url: string }>) => {
         sort: `${paginationState.sort},${paginationState.order}`,
       })
     );
+
+    // eslint-disable-next-line no-console
+    console.log({
+      page: paginationState.activePage - 1,
+      size: paginationState.itemsPerPage,
+      sort: `${paginationState.sort},${paginationState.order}`,
+    });
   };
 
   const sortEntities = () => {

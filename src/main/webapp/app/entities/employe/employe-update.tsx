@@ -108,6 +108,7 @@ export const EmployeUpdate = (props: RouteComponentProps<{ id: string }>) => {
                 }}
               />
               <ValidatedField
+                hidden={true}
                 id="employe-compte"
                 name="compteId"
                 data-cy="compte"

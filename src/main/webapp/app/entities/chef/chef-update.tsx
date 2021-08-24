@@ -118,7 +118,14 @@ export const ChefUpdate = (props: RouteComponentProps<{ id: string }>) => {
                   required: { value: true, message: translate('entity.validation.required') },
                 }}
               />
-              <ValidatedField id="chef-role" name="role" data-cy="role" label={translate('gestionDeTachesApp.chef.role')} type="select">
+              <ValidatedField
+                id="chef-role"
+                hidden={true}
+                name="role"
+                data-cy="role"
+                label={translate('gestionDeTachesApp.chef.role')}
+                type="select"
+              >
                 <option value={AUTHORITIES.CHEFSERVICE} key="0">
                   {' '}
                   Chef de Service
@@ -134,6 +141,7 @@ export const ChefUpdate = (props: RouteComponentProps<{ id: string }>) => {
                 </option>
               </ValidatedField>
               <ValidatedField
+                hidden={true}
                 id="chef-compte"
                 name="compteId"
                 data-cy="compte"

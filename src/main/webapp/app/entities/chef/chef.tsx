@@ -6,10 +6,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { getEntities } from './chef.reducer';
 import { IChef } from 'app/shared/model/chef.model';
-import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
+import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT, AUTHORITIES } from 'app/config/constants';
 import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/shared/util/pagination.constants';
 import { overridePaginationStateWithQueryParams } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
+import { hasAnyAuthority } from 'app/shared/auth/private-route';
 
 export const Chef = (props: RouteComponentProps<{ url: string }>) => {
   const dispatch = useAppDispatch();
@@ -21,6 +22,7 @@ export const Chef = (props: RouteComponentProps<{ url: string }>) => {
   const chefList = useAppSelector(state => state.chef.entities);
   const loading = useAppSelector(state => state.chef.loading);
   const totalItems = useAppSelector(state => state.chef.totalItems);
+  const isAdmin = useAppSelector(state => hasAnyAuthority(state.authentication.account.authorities, [AUTHORITIES.ADMIN]));
 
   const getAllEntities = () => {
     dispatch(
@@ -88,11 +90,13 @@ export const Chef = (props: RouteComponentProps<{ url: string }>) => {
             <FontAwesomeIcon icon="sync" spin={loading} />{' '}
             <Translate contentKey="gestionDeTachesApp.chef.home.refreshListLabel">Refresh List</Translate>
           </Button>
-          <Link to={`${match.url}/new`} className="btn btn-primary jh-create-entity" id="jh-create-entity" data-cy="entityCreateButton">
-            <FontAwesomeIcon icon="plus" />
-            &nbsp;
-            <Translate contentKey="gestionDeTachesApp.chef.home.createLabel">Create new Chef</Translate>
-          </Link>
+          {false && (
+            <Link to={`${match.url}/new`} className="btn btn-primary jh-create-entity" id="jh-create-entity" data-cy="entityCreateButton">
+              <FontAwesomeIcon icon="plus" />
+              &nbsp;
+              <Translate contentKey="gestionDeTachesApp.chef.home.createLabel">Create new Chef</Translate>
+            </Link>
+          )}
         </div>
       </h2>
       <div className="table-responsive">
@@ -134,18 +138,20 @@ export const Chef = (props: RouteComponentProps<{ url: string }>) => {
                           <Translate contentKey="entity.action.view">View</Translate>
                         </span>
                       </Button>
-                      <Button
-                        tag={Link}
-                        to={`${match.url}/${chef.id}/edit?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
-                        color="primary"
-                        size="sm"
-                        data-cy="entityEditButton"
-                      >
-                        <FontAwesomeIcon icon="pencil-alt" />{' '}
-                        <span className="d-none d-md-inline">
-                          <Translate contentKey="entity.action.edit">Edit</Translate>
-                        </span>
-                      </Button>
+                      {isAdmin && (
+                        <Button
+                          tag={Link}
+                          to={`${match.url}/${chef.id}/edit?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
+                          color="primary"
+                          size="sm"
+                          data-cy="entityEditButton"
+                        >
+                          <FontAwesomeIcon icon="pencil-alt" />{' '}
+                          <span className="d-none d-md-inline">
+                            <Translate contentKey="entity.action.edit">Edit</Translate>
+                          </span>
+                        </Button>
+                      )}
                       <Button
                         tag={Link}
                         to={`${match.url}/${chef.id}/delete?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}

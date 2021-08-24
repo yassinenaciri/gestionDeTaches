@@ -96,7 +96,7 @@ export const Employe = (props: RouteComponentProps<{ url: string }>) => {
             <FontAwesomeIcon icon="sync" spin={loading} />{' '}
             <Translate contentKey="gestionDeTachesApp.employe.home.refreshListLabel">Refresh List</Translate>
           </Button>
-          {isAdmin && (
+          {false && (
             <Link to={`${match.url}/new`} className="btn btn-primary jh-create-entity" id="jh-create-entity" data-cy="entityCreateButton">
               <FontAwesomeIcon icon="plus" />
               &nbsp;
@@ -154,15 +154,17 @@ export const Employe = (props: RouteComponentProps<{ url: string }>) => {
                           </span>
                         </Button>
                       )}
-                      <Link
-                        to={`/tache/new/${employe.id.toString()}`}
-                        className="btn btn-primary jh-create-entity"
-                        id="jh-create-entity"
-                        data-cy="entityCreateButton"
-                      >
-                        <FontAwesomeIcon icon="plus" />
-                        &nbsp; Affecter Une Tache
-                      </Link>
+                      {isChefService && (
+                        <Link
+                          to={`/tache/new/${employe.id.toString()}`}
+                          className="btn btn-primary jh-create-entity"
+                          id="jh-create-entity"
+                          data-cy="entityCreateButton"
+                        >
+                          <FontAwesomeIcon icon="plus" />
+                          &nbsp; Affecter Une Tache
+                        </Link>
+                      )}
                       {isAdmin && (
                         <Button
                           tag={Link}
