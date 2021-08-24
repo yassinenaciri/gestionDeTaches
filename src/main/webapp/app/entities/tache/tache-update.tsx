@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { Button, Row, Col, FormText } from 'reactstrap';
-import { isNumber, Translate, translate, ValidatedField, ValidatedForm } from 'react-jhipster';
+import { isNumber, size, Translate, translate, ValidatedField, ValidatedForm } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { IIService } from 'app/shared/model/i-service.model';
@@ -83,6 +83,7 @@ export const TacheUpdate = (props: RouteComponentProps<{ id: string }>) => {
           cadreAffecteId: tacheEntity?.cadreAffecte?.id,
         };
 
+  // @ts-ignore
   return (
     <div>
       <Row className="justify-content-center">
@@ -135,7 +136,8 @@ export const TacheUpdate = (props: RouteComponentProps<{ id: string }>) => {
                 id="tache-description"
                 name="description"
                 data-cy="description"
-                type="text"
+                type="textarea"
+                style={{ height: '200px', resize: 'none' }}
                 validate={{
                   required: { value: true, message: translate('entity.validation.required') },
                 }}

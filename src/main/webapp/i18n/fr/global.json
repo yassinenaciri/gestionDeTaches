@@ -8,7 +8,7 @@
       "entities": {
         "main": "Entités",
         "employe": "Employe",
-        "chef": "Chef",
+        "chef": "Responsable",
         "tache": "Tache",
         "iService": "I Service",
         "division": "Division",
@@ -100,11 +100,11 @@
       "addimage": "Ajouter image",
       "back": "Retour",
       "cancel": "Annuler",
-      "edit": "Editer",
+      "edit": "Modifier",
       "delete": "Supprimer",
       "open": "Ouvrir",
       "save": "Sauvegarder",
-      "view": "Voir"
+      "view": "Consulter"
     },
     "detail": {
       "field": "Champs",

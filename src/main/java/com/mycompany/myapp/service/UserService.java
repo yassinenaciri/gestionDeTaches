@@ -2,9 +2,10 @@ package com.mycompany.myapp.service;
 
 import com.mycompany.myapp.config.Constants;
 import com.mycompany.myapp.domain.Authority;
+import com.mycompany.myapp.domain.Chef;
+import com.mycompany.myapp.domain.Employe;
 import com.mycompany.myapp.domain.User;
-import com.mycompany.myapp.repository.AuthorityRepository;
-import com.mycompany.myapp.repository.UserRepository;
+import com.mycompany.myapp.repository.*;
 import com.mycompany.myapp.security.AuthoritiesConstants;
 import com.mycompany.myapp.security.SecurityUtils;
 import com.mycompany.myapp.service.dto.AdminUserDTO;
@@ -38,19 +39,27 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     private final AuthorityRepository authorityRepository;
-
+    private final ChefRepository chefRepository;
+    private final IServiceRepository serviceRepository;
+    private final EmployeRepository employeRepository;
     private final CacheManager cacheManager;
 
     public UserService(
         UserRepository userRepository,
         PasswordEncoder passwordEncoder,
         AuthorityRepository authorityRepository,
-        CacheManager cacheManager
+        ChefRepository chefRepository,
+        CacheManager cacheManager,
+        EmployeRepository employeRepository,
+        IServiceRepository serviceRepository
     ) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authorityRepository = authorityRepository;
         this.cacheManager = cacheManager;
+        this.chefRepository = chefRepository;
+        this.serviceRepository = serviceRepository;
+        this.employeRepository = employeRepository;
     }
 
     public Optional<User> activateRegistration(String key) {
@@ -188,6 +197,39 @@ public class UserService {
         this.clearUserCaches(user);
         log.debug("Created Information for User: {}", user);
         return user;
+    }
+
+    public void createChef(long id) {
+        User user = userRepository.findById(id).get();
+        Set<Authority> authorities = user.getAuthorities();
+        List<String> roles = new ArrayList<>();
+        for (Authority authority : authorities) {
+            roles.add(authority.getName());
+        }
+        if (roles.contains("ROLE_CHEFDESERVICE")) {
+            Chef chef = new Chef();
+            chef.setCompte(user);
+            chef.setNomComplet(user.getFirstName().concat(" ").concat(user.getLastName()));
+            chefRepository.save(chef);
+        }
+        return;
+    }
+
+    public void createCadre(long id, long idService) {
+        User user = userRepository.findById(id).get();
+        Set<Authority> authorities = user.getAuthorities();
+        List<String> roles = new ArrayList<>();
+        for (Authority authority : authorities) {
+            roles.add(authority.getName());
+        }
+        if (roles.contains("ROLE_CADRE")) {
+            Employe employe = new Employe();
+            employe.setCompte(user);
+            employe.setNomComplet(user.getFirstName().concat(" ").concat(user.getLastName()));
+            employe.setService(serviceRepository.findById(idService).get());
+            employeRepository.save(employe);
+        }
+        return;
     }
 
     /**

@@ -6,22 +6,32 @@ import { toast } from 'react-toastify';
 import PasswordStrengthBar from 'app/shared/layout/password/password-strength-bar';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 import { handleRegister, reset } from './register.reducer';
+import { Redirect } from 'react-router-dom';
+import { login } from 'app/shared/reducers/authentication';
 
 export const RegisterPage = () => {
   const [password, setPassword] = useState('');
   const dispatch = useAppDispatch();
-
+  const isAuthenticated = useAppSelector(state => state.authentication.isAuthenticated);
   useEffect(
     () => () => {
       dispatch(reset());
     },
     []
   );
+  useEffect(
+    () => () => {
+      dispatch(reset());
+    },
+    [isAuthenticated]
+  );
+  const handleLogin = (username, password1, rememberMe = false) => dispatch(login(username, password1, rememberMe));
 
   const currentLocale = useAppSelector(state => state.locale.currentLocale);
 
-  const handleValidSubmit = ({ username, email, firstPassword }) => {
-    dispatch(handleRegister({ login: username, email, password: firstPassword, langKey: currentLocale }));
+  const handleValidSubmit = async ({ username, email, firstPassword }) => {
+    await dispatch(handleRegister({ login: username, email, password: firstPassword, langKey: currentLocale }));
+    handleLogin(username, firstPassword);
   };
 
   const updatePassword = event => setPassword(event.target.value);
@@ -33,6 +43,10 @@ export const RegisterPage = () => {
       toast.success(translate(successMessage));
     }
   }, [successMessage]);
+
+  if (isAuthenticated) {
+    return <Redirect to={'/'} />;
+  }
 
   return (
     <div>
@@ -106,21 +120,6 @@ export const RegisterPage = () => {
             </Button>
           </ValidatedForm>
           <p>&nbsp;</p>
-          <Alert color="warning">
-            <span>
-              <Translate contentKey="global.messages.info.authenticated.prefix">If you want to </Translate>
-            </span>
-            <a className="alert-link">
-              <Translate contentKey="global.messages.info.authenticated.link"> sign in</Translate>
-            </a>
-            <span>
-              <Translate contentKey="global.messages.info.authenticated.suffix">
-                , you can try the default accounts:
-                <br />- Administrator (login=&quot;admin&quot; and password=&quot;admin&quot;)
-                <br />- User (login=&quot;user&quot; and password=&quot;user&quot;).
-              </Translate>
-            </span>
-          </Alert>
         </Col>
       </Row>
     </div>

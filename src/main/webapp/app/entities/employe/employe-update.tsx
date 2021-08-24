@@ -131,7 +131,6 @@ export const EmployeUpdate = (props: RouteComponentProps<{ id: string }>) => {
                 type="select"
                 required
               >
-                <option value="" key="0" />
                 {iServices
                   ? iServices.map(otherEntity => (
                       <option value={otherEntity.id} key={otherEntity.id}>

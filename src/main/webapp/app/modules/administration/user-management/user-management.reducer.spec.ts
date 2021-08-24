@@ -294,7 +294,7 @@ describe('User management reducer tests', () => {
           payload: resolvedObject,
         },
       ];
-      await store.dispatch(createUser({}));
+      await store.dispatch(createUser({ user: {}, idService: 0 }));
       expect(store.getActions()[0]).toMatchObject(expectedActions[0]);
       expect(store.getActions()[1]).toMatchObject(expectedActions[1]);
       expect(store.getActions()[2]).toMatchObject(expectedActions[2]);

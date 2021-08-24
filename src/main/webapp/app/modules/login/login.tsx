@@ -4,6 +4,7 @@ import { Redirect, RouteComponentProps } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 import { login } from 'app/shared/reducers/authentication';
 import LoginModal from './login-modal';
+import { Col, Row } from 'reactstrap';
 
 export const Login = (props: RouteComponentProps<any>) => {
   const dispatch = useAppDispatch();
@@ -27,7 +28,20 @@ export const Login = (props: RouteComponentProps<any>) => {
   if (isAuthenticated) {
     return <Redirect to={from} />;
   }
-  return <LoginModal showModal={showModal} handleLogin={handleLogin} handleClose={handleClose} loginError={loginError} />;
+  return (
+    <div style={{ backgroundImage: 'url(../../../content/images/login.png)' }}>
+      <Row>
+        <Col md="7">
+          <div>
+            <img src="../../../content/images/login.png" />
+          </div>
+        </Col>
+        <Col md="5">
+          <LoginModal showModal={showModal} handleLogin={handleLogin} handleClose={handleClose} loginError={loginError} />
+        </Col>
+      </Row>
+    </div>
+  );
 };
 
 export default Login;

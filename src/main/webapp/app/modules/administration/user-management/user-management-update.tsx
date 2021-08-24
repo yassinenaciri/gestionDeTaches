@@ -6,11 +6,17 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { locales, languages } from 'app/config/translation';
 import { getUser, getRoles, updateUser, createUser, reset } from './user-management.reducer';
+
+import { getEntities } from '../../../entities/i-service/i-service.reducer';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
+import { Etat } from 'app/shared/model/enumerations/etat.model';
+import { AUTHORITIES } from 'app/config/constants';
 
 export const UserManagementUpdate = (props: RouteComponentProps<{ login: string }>) => {
   const [isNew] = useState(!props.match.params || !props.match.params.login);
+
   const dispatch = useAppDispatch();
+  const iServices = useAppSelector(state => state.iService.entities);
 
   useEffect(() => {
     if (isNew) {
@@ -30,7 +36,7 @@ export const UserManagementUpdate = (props: RouteComponentProps<{ login: string 
 
   const saveUser = values => {
     if (isNew) {
-      dispatch(createUser(values));
+      dispatch(createUser({ user: values, idService: 1 }));
     } else {
       dispatch(updateUser(values));
     }
@@ -42,14 +48,13 @@ export const UserManagementUpdate = (props: RouteComponentProps<{ login: string 
   const loading = useAppSelector(state => state.userManagement.loading);
   const updating = useAppSelector(state => state.userManagement.updating);
   const authorities = useAppSelector(state => state.userManagement.authorities);
-
+  const [isCadre, setCadre] = useState(!isNew && user.authorities.includes(AUTHORITIES.CADRE, 0));
+  let idService = iServices[0] ? iServices[0].id.toString() : '0';
   return (
     <div>
       <Row className="justify-content-center">
         <Col md="8">
-          <h1>
-            <Translate contentKey="userManagement.home.createOrEditLabel">Create or edit a User</Translate>
-          </h1>
+          <h1>{isNew ? 'Créer un utilisateur ' : 'Modifier un utilisateur'}</h1>
         </Col>
       </Row>
       <Row className="justify-content-center">
@@ -150,13 +155,39 @@ export const UserManagementUpdate = (props: RouteComponentProps<{ login: string 
                   </option>
                 ))}
               </ValidatedField>
-              <ValidatedField type="select" name="authorities" multiple label={translate('userManagement.profiles')}>
+              <ValidatedField
+                type="select"
+                name="authorities"
+                onChange={event => {
+                  setCadre(event.target.value === AUTHORITIES.CADRE);
+                }}
+                label={translate('userManagement.profiles')}
+              >
                 {authorities.map(role => (
                   <option value={role} key={role}>
                     {role}
                   </option>
                 ))}
               </ValidatedField>
+              <label hidden={!isCadre}> Choisissez un service</label>
+              <select
+                id="idService"
+                hidden={!isCadre}
+                style={{ width: '100%', height: '40px', marginBottom: '10px' }}
+                name="Service"
+                required
+                onChange={event => {
+                  idService = event.target.value;
+                }}
+              >
+                {iServices
+                  ? iServices.map(otherEntity => (
+                      <option value={otherEntity.id} key={otherEntity.id}>
+                        {otherEntity.nomService}
+                      </option>
+                    ))
+                  : null}
+              </select>
               <Button tag={Link} to="/admin/user-management" replace color="info">
                 <FontAwesomeIcon icon="arrow-left" />
                 &nbsp;

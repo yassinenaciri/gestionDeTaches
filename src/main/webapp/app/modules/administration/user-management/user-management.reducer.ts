@@ -45,8 +45,12 @@ export const getUser = createAsyncThunk(
 
 export const createUser = createAsyncThunk(
   'userManagement/create_user',
-  async (user: IUser, thunkAPI) => {
-    const result = await axios.post<IUser>(adminUrl, user);
+  async (args: { user: IUser; idService }, thunkAPI) => {
+    // eslint-disable-next-line no-console
+    console.log(args.idService);
+    args.user.authorities = [args.user.authorities];
+
+    const result = await axios.post<IUser>(adminUrl + '/' + args.idService, args.user);
     thunkAPI.dispatch(getUsersAsAdmin({}));
     return result;
   },

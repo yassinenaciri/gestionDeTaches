@@ -105,11 +105,14 @@ public class UserResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      * @throws BadRequestAlertException {@code 400 (Bad Request)} if the login or email is already in use.
      */
-    @PostMapping("/users")
+    @PostMapping("/users/{id}")
     @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
-    public ResponseEntity<User> createUser(@Valid @RequestBody AdminUserDTO userDTO) throws URISyntaxException {
+    public ResponseEntity<User> createUser(
+        @Valid @RequestBody AdminUserDTO userDTO,
+        @PathVariable(value = "id", required = false) final Long id
+    ) throws URISyntaxException {
         log.debug("REST request to save User : {}", userDTO);
-
+        log.debug(Long.toString(id));
         if (userDTO.getId() != null) {
             throw new BadRequestAlertException("A new user cannot already have an ID", "userManagement", "idexists");
             // Lowercase the user login before comparing with database
@@ -120,6 +123,8 @@ public class UserResource {
         } else {
             User newUser = userService.createUser(userDTO);
             mailService.sendCreationEmail(newUser);
+            userService.createChef(newUser.getId());
+            userService.createCadre(newUser.getId(), id);
             return ResponseEntity
                 .created(new URI("/api/admin/users/" + newUser.getLogin()))
                 .headers(HeaderUtil.createAlert(applicationName, "userManagement.created", newUser.getLogin()))
