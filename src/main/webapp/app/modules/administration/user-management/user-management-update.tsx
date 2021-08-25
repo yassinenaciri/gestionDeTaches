@@ -176,7 +176,7 @@ export const UserManagementUpdate = (props: RouteComponentProps<{ login: string 
                 hidden={!isCadre}
                 style={{ width: '100%', height: '40px', marginBottom: '10px' }}
                 name="Service"
-                required
+                required={isCadre}
                 onChange={event => {
                   idService = event.target.value;
                 }}
