@@ -11,6 +11,7 @@ import { IDirection } from 'app/shared/model/direction.model';
 import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
 import { mapIdList } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
+import { AUTHORITIES } from 'app/config/constants';
 
 export const DirectionUpdate = (props: RouteComponentProps<{ id: string }>) => {
   const dispatch = useAppDispatch();
@@ -110,11 +111,17 @@ export const DirectionUpdate = (props: RouteComponentProps<{ id: string }>) => {
               >
                 <option value="" key="0" />
                 {chefs
-                  ? chefs.map(otherEntity => (
-                      <option value={otherEntity.id} key={otherEntity.id}>
-                        {otherEntity.nomComplet}
-                      </option>
-                    ))
+                  ? chefs.map(otherEntity => {
+                      if (otherEntity.role === AUTHORITIES.DIRECTEUR && !otherEntity.direction)
+                        return (
+                          <option value={otherEntity.id} key={otherEntity.id}>
+                            {otherEntity.nomComplet}
+                          </option>
+                        );
+                      else {
+                        return;
+                      }
+                    })
                   : null}
               </ValidatedField>
               <FormText>

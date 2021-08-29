@@ -221,6 +221,27 @@ public class UserService {
         return;
     }
 
+    public void updateChef(long id) {
+        User user = userRepository.findById(id).get();
+        Set<Authority> authorities = user.getAuthorities();
+        List<String> roles = new ArrayList<>();
+        for (Authority authority : authorities) {
+            roles.add(authority.getName());
+        }
+        if (
+            roles.contains("ROLE_CHEFSERVICE") ||
+            roles.contains("ROLE_CHEFPOLE") ||
+            roles.contains("ROLE_CHEFDIVISION") ||
+            roles.contains("ROLE_DIRECTEUR")
+        ) {
+            Chef chef = chefRepository.findChefByCompte_Id(id);
+            chef.setRole(roles.get(0));
+            chef.setNomComplet(user.getFirstName().concat(" ").concat(user.getLastName()));
+            chefRepository.save(chef);
+        }
+        return;
+    }
+
     public void createCadre(long id, long idService) {
         User user = userRepository.findById(id).get();
         Set<Authority> authorities = user.getAuthorities();
@@ -231,6 +252,22 @@ public class UserService {
         if (roles.contains("ROLE_CADRE")) {
             Employe employe = new Employe();
             employe.setCompte(user);
+            employe.setNomComplet(user.getFirstName().concat(" ").concat(user.getLastName()));
+            employe.setService(serviceRepository.findById(idService).get());
+            employeRepository.save(employe);
+        }
+        return;
+    }
+
+    public void updateCadre(long id, long idService) {
+        User user = userRepository.findById(id).get();
+        Set<Authority> authorities = user.getAuthorities();
+        List<String> roles = new ArrayList<>();
+        for (Authority authority : authorities) {
+            roles.add(authority.getName());
+        }
+        if (roles.contains("ROLE_CADRE")) {
+            Employe employe = employeRepository.findEmployeByCompte_Id(user.getId());
             employe.setNomComplet(user.getFirstName().concat(" ").concat(user.getLastName()));
             employe.setService(serviceRepository.findById(idService).get());
             employeRepository.save(employe);

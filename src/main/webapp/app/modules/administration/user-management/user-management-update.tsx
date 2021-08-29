@@ -37,9 +37,9 @@ export const UserManagementUpdate = (props: RouteComponentProps<{ login: string 
 
   const saveUser = values => {
     if (isNew) {
-      dispatch(createUser({ user: values, idService: 1 }));
+      dispatch(createUser({ user: values, id: idService }));
     } else {
-      dispatch(updateUser(values));
+      dispatch(updateUser({ user: values, id: idService }));
     }
     handleClose();
   };
@@ -181,6 +181,7 @@ export const UserManagementUpdate = (props: RouteComponentProps<{ login: string 
                   idService = event.target.value;
                 }}
               >
+                <option></option>
                 {iServices
                   ? iServices.map(otherEntity => (
                       <option value={otherEntity.id} key={otherEntity.id}>

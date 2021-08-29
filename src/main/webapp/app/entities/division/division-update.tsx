@@ -13,6 +13,7 @@ import { IDivision } from 'app/shared/model/division.model';
 import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
 import { mapIdList } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
+import { AUTHORITIES } from 'app/config/constants';
 
 export const DivisionUpdate = (props: RouteComponentProps<{ id: string }>) => {
   const dispatch = useAppDispatch();
@@ -116,11 +117,17 @@ export const DivisionUpdate = (props: RouteComponentProps<{ id: string }>) => {
               >
                 <option value="" key="0" />
                 {chefs
-                  ? chefs.map(otherEntity => (
-                      <option value={otherEntity.id} key={otherEntity.id}>
-                        {otherEntity.nomComplet}
-                      </option>
-                    ))
+                  ? chefs.map(otherEntity => {
+                      if (otherEntity.role === AUTHORITIES.CHEFDIVISION && !otherEntity.division)
+                        return (
+                          <option value={otherEntity.id} key={otherEntity.id}>
+                            {otherEntity.nomComplet}
+                          </option>
+                        );
+                      else {
+                        return;
+                      }
+                    })
                   : null}
               </ValidatedField>
               <FormText>
